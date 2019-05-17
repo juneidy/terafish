@@ -13,6 +13,7 @@ public class Blob {
 	 * Bottom-right pixel of the object
 	 */
 	private Point bottomRight;
+	private int brightness;
 
 	/**
 	 * Construct with given top-left and bottom-right point
@@ -20,6 +21,17 @@ public class Blob {
 	public Blob(Point inTopLeft, Point inBottomRight) {
 		topLeft = inTopLeft;
 		bottomRight = inBottomRight;
+	}
+
+	public int calculateWhiteness(Image i){
+		int[][] g = i.getGrey();
+		brightness = 0;
+		for(int ii = getTop(); ii <= bottomRight.y; ii++){
+			for(int jj = getLeft(); jj <= bottomRight.x; jj++){
+				brightness += g[ii][jj];
+			}
+		}
+		return brightness;
 	}
 
 	public int getTop() {
@@ -67,6 +79,7 @@ public class Blob {
 
 	public String toString() {
 		return "Top is " + getTop() + ", bottom is " + getBottom() +
-			", left is " + getLeft() + ", right is " + getRight();
+			", left is " + getLeft() + ", right is " + getRight() +
+			", brightness is " + brightness;
 	}
 }   

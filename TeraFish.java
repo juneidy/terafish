@@ -19,10 +19,15 @@ public class TeraFish{
 	private static final int BASE_WAIT_TIME = 20000; //20 secs
 	private static final int WAIT_CHECK_INTERVAL = 1000; //1 sec
 	private static final int TIME_TO_FISH_BUFFER = 2000; //2 secs
+	private static final int SOONEST_POSSIBLE_FISH_TIME = 7000; //7 secs
 	private static final int MAX_FISHING_TIME = 30000; //30 secs
 	private static final int AFTER_FISHING_DELAY = 3500; //3.5 secs
 
-	private static final double fRatio = 0.2;
+	private static final double F_RATIO = 0.2;
+	private static final double FRAME_RATIO = 0.01;
+
+	private static final int MIN_GOLDEN_WHITENESS = 80000;
+
 
 	private static int[][] fTpl;
 	private static int[] gaugeFrameTpl;
@@ -39,6 +44,8 @@ public class TeraFish{
 
 	private static State state = State.START;
 	private static Robot r;
+	private static boolean needCheckGolden = true;
+	private static boolean golden = false;
 	static{
 		try{
 			fTpl = Image.loadGreyTemplate("./f.tpl");
@@ -68,8 +75,8 @@ public class TeraFish{
 	public static void main(String[] args){
 		try{
 			if(debug){
-				System.out.println("System is starting in 2 seconds");
-				Thread.sleep(2000);
+				System.out.println("System is starting in 1 seconds");
+				Thread.sleep(1000);
 
 				//fish();
 
@@ -108,13 +115,17 @@ public class TeraFish{
 								fishingStarted = System.currentTimeMillis();
 								Thread.sleep(TIME_TO_FISH_BUFFER);
 								state = State.FISH;
+								needCheckGolden = true;
+								golden = false;
 							}else{
 								Thread.sleep(WAIT_CHECK_INTERVAL);
 							}
 							break;
 						case FISH:
-							boolean failed = System.currentTimeMillis() - fishingStarted > MAX_FISHING_TIME;
-							if(isFinishedFishing() || failed){
+							long cur = System.currentTimeMillis();
+							boolean failed = cur - fishingStarted > MAX_FISHING_TIME;
+							boolean aboutTime = cur - fishingStarted > SOONEST_POSSIBLE_FISH_TIME;
+							if(aboutTime && isFinishedFishing() || failed){
 								pressKey(KeyEvent.VK_F, 0);
 								state = State.START;
 								pressing = false;
@@ -150,6 +161,11 @@ public class TeraFish{
 			}else{
 				box = 1;
 				fish = 0;
+			}
+
+			if(needCheckGolden){
+				golden = blobs[fish].calculateWhiteness(i) > MIN_GOLDEN_WHITENESS;
+				needCheckGolden = false;
 			}
 
 			if(blobs[fish].getLeft() < (blobs[box].getRight() - 20)){
@@ -212,12 +228,16 @@ public class TeraFish{
 		int right = b.getRight() - 10;
 		int left = b.getLeft() + 10;
 		int[][] grey = i.getGrey();
+		int rightMost = b.getRight();
+		int distance = golden ? 12 : 30;
 		for(int ii = right; ii >= left; ii--){
 			if(grey[top][ii] > 150){
 				//this is the fin
-				if(b.getRight() - ii < 30){
+				//the head if golden
+				if(rightMost - ii < distance){
 					return true;
-					//System.out.println("the fin is at " + ii);
+				}else{
+					return false;
 				}
 			}
 		}
@@ -230,7 +250,7 @@ public class TeraFish{
 			Preprocess.getGrey(new Image(r.createScreenCapture(F), false))
 		);
 
-		return ratio < fRatio;
+		return ratio < F_RATIO;
 	}
 
 	private static boolean isFinishedFishing(){
@@ -239,6 +259,6 @@ public class TeraFish{
 			(new Image(r.createScreenCapture(gaugeFrame), false)).getRgb()
 		);
 
-		return ratio > 0.01;
+		return ratio > FRAME_RATIO;
 	}
 }
