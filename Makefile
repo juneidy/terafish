@@ -71,4 +71,4 @@ terafish.zip : $(SRC)*
 	zip -j terafish.zip $(SRC)*
 
 clean : 
-	rm -rf build $(EXEC)
+	rm -rf build terafish.zip
