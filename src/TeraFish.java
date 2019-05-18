@@ -12,7 +12,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class TeraFish{
-	private static final Rectangle gauge = new Rectangle(714, 309, 420, 30);
+	private static final int GAUGE_WIDTH = 420;
+	private static final Rectangle gauge = new Rectangle(714, 309, GAUGE_WIDTH, 30);
 	private static final Rectangle F = new Rectangle(957, 262, 12, 16);
 	private static final Rectangle gaugeFrame = new Rectangle(702, 307, 10, 50);
 
@@ -78,23 +79,25 @@ public class TeraFish{
 				System.out.println("System is starting in 1 seconds");
 				Thread.sleep(1000);
 
-				//fish();
+				needCheckGolden = false;
 
-				Image i = new Image(r.createScreenCapture(gaugeFrame), false);
+				fish();
 
-				double ratio = Preprocess.sumOfAbsoluteRatio(
-					gaugeFrameTpl,
-					i.getRgb()
-				);
+				//Image i = new Image(r.createScreenCapture(gaugeFrame), false);
 
-				System.out.println("ratio is " + ratio);
-				if(ratio < 0.01){
-					System.out.println("not yet!");
-				}else{
-					System.out.println("Finished fishing!");
-				}
+				//double ratio = Preprocess.sumOfAbsoluteRatio(
+				//	gaugeFrameTpl,
+				//	i.getRgb()
+				//);
 
-				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				//System.out.println("ratio is " + ratio);
+				//if(ratio < 0.01){
+				//	System.out.println("not yet!");
+				//}else{
+				//	System.out.println("Finished fishing!");
+				//}
+
+				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 			}else{
 				System.out.println("System is starting in 3 seconds");
 				Thread.sleep(3000);
@@ -224,11 +227,16 @@ public class TeraFish{
 	}
 
 	private static boolean fishTooFar(Image i, Blob b){
+		int rightMost = b.getRight();
+		// Calling this function means they are in the same blob
+		// if they are in the right-most of the pixels, just hold F
+		if(rightMost==(GAUGE_WIDTH - 1)){
+			return false;
+		}
 		int top = b.getTop() + 9;
-		int right = b.getRight() - 10;
+		int right = rightMost - 10;
 		int left = b.getLeft() + 10;
 		int[][] grey = i.getGrey();
-		int rightMost = b.getRight();
 		int distance = golden ? 12 : 30;
 		for(int ii = right; ii >= left; ii--){
 			if(grey[top][ii] > 150){
