@@ -40,9 +40,6 @@ public class TeraFish{
 		FISH
 	}
 
-	//Colors for debug
-	private static final int[] WHITE = new int[]{ 255, 255, 255 };
-
 	private static State state = State.START;
 	private static Robot r;
 	private static boolean needCheckGolden = true;
@@ -67,6 +64,7 @@ public class TeraFish{
 	private static final boolean debug = false;
 	private static final String FORMAT = "png";
 	private static final File debugOutput = new File("/tmp/foo");
+	private static final int[] WHITE = new int[]{ 255, 255, 255 };
 
 	//Pressing state for efficiency?
 	private static boolean pressing = false;
@@ -80,6 +78,7 @@ public class TeraFish{
 				Thread.sleep(1000);
 
 				needCheckGolden = false;
+				golden = false;
 
 				fish();
 
@@ -228,14 +227,21 @@ public class TeraFish{
 
 	private static boolean fishTooFar(Image i, Blob b){
 		int rightMost = b.getRight();
+		int leftMost = b.getLeft();
 		// Calling this function means they are in the same blob
-		// if they are in the right-most of the pixels, just hold F
-		if(rightMost==(GAUGE_WIDTH - 1)){
+		if(
+			// if they are in the right-most of the pixels, just hold F
+			rightMost==(GAUGE_WIDTH - 1) ||
+			// if only the fish is detected, keep holding F
+			// Golden fish brightness is so high that the box disappeared when
+			// golden is in the box
+			(golden && rightMost - leftMost < 50)
+		){
 			return false;
 		}
 		int top = b.getTop() + 9;
 		int right = rightMost - 10;
-		int left = b.getLeft() + 10;
+		int left = leftMost + 10;
 		int[][] grey = i.getGrey();
 		int distance = golden ? 12 : 30;
 		for(int ii = right; ii >= left; ii--){
