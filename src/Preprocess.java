@@ -99,21 +99,22 @@ public class Preprocess {
 		return total / (double)(len * 255 * 3);
 	}
 
-	public static int[] filterColour(int[] a, int[] c, int tolerance){
-		int[] filtered = new int[a.length];
+	public static int[][] filterColour(Image i, int[] c, int tolerance){
+		int[][] filtered = new int[i.height][i.width];
+		int[] rgb = i.getRgb();
 
-		for(int ii = 0; ii < a.length; ii+=3){
+		for(int ii = 0; ii < rgb.length; ii+=3){
 			boolean inTolerance = true;
 			int jj = 0;
 			while(inTolerance && jj < 3){
-				inTolerance = Math.abs(a[ii + jj] - c[jj]) <= tolerance;
+				inTolerance = Math.abs(rgb[ii + jj] - c[jj]) <= tolerance;
 				jj++;
 			}
 			if(inTolerance){
-				for(int kk = 0; kk < 3; kk++){
-					int idx = ii + kk;
-					filtered[idx] = 255; //a[idx];
-				}
+				int tmp = ii / 3;
+				int y = tmp / i.width;
+				int x = tmp % i.width;
+				filtered[y][x] = 255;
 			}
 		}
 

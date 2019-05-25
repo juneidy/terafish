@@ -36,6 +36,36 @@ public class Image {
 		}
 	}
 
+	private Image(int h, int w, int[] rgb){
+		height = h;
+		width = w;
+		this.rgb = rgb;
+		type = BufferedImage.TYPE_INT_RGB;
+	}
+
+	/**
+	 * Returns a copy of cropped image
+	 */
+	public Image crop(Blob b){
+		int height = b.getHeight();
+		int width = b.getWidth();
+		int[] rgb = new int[3 * height * width];
+
+		int top = b.getTop();
+		int left = b.getLeft();
+		for(int ii = 0; ii < height; ii++){
+			for(int jj = 0; jj < width; jj++){
+				int origPos = ((ii + top) * this.width + (jj + left)) * 3;
+				int croppedPos = (ii * width + jj) * 3;
+				for(int kk = 0; kk < 3; kk++){
+					rgb[croppedPos + kk] = this.rgb[origPos + kk];
+				}
+			}
+		}
+
+		return new Image(height, width, rgb);
+	}
+
 	public int[] getRgb(){
 		return rgb;
 	}
@@ -83,12 +113,32 @@ public class Image {
 	/**
 	 * Get a copy of BufferedImage representation of this Image object
 	 */
-	public BufferedImage toBufferedImage() {
+	public BufferedImage toBufferedImage(){
 		BufferedImage buf = new BufferedImage(width, height, type);
 		WritableRaster raster = buf.getRaster();
 
 		raster.setPixels(0, 0, width, height, rgb);
 		return buf;
+	}
+
+	/**
+	 * Load Greyscale tpl.
+	 */
+	public static int[][] loadGreyTemplate(String f)throws IOException{
+		return (new Image(ImageIO.read(new File(f)), true)).getGrey();
+	}
+
+	/**
+	 * Load RGB tpl.
+	 */
+	public static int[] loadRgbTemplate(String f)throws IOException{
+		WritableRaster raster = ImageIO.read(new File(f)).getRaster();
+		int height = raster.getHeight();
+		int width = raster.getWidth();
+
+		int[] rgb = new int[3 * height * width];
+		raster.getPixels(0, 0, width, height, rgb);
+		return rgb;
 	}
 
 	/**
@@ -149,23 +199,14 @@ public class Image {
 		return this;
 	}
 
-	public static int[][] loadGreyTemplate(String f)throws IOException{
-		return (new Image(ImageIO.read(new File(f)), true)).getGrey();
-	}
-
-	public static int[] loadRgbTemplate(String f)throws IOException{
-		WritableRaster raster = ImageIO.read(new File(f)).getRaster();
-		int height = raster.getHeight();
-		int width = raster.getWidth();
-
-		int[] rgb = new int[3 * height * width];
-		raster.getPixels(0, 0, width, height, rgb);
-		return rgb;
-	}
-
+	/**
+	 * DEBUG
+	 * so that it's easy to load test image.
+	 */
 	public static Image loadTestImage(String f)throws IOException{
 		BufferedImage buf = ImageIO.read(new File("testfile/" + f));
 		if(buf.getType()!=BufferedImage.TYPE_INT_RGB){
+			long startTime = System.currentTimeMillis();
 			BufferedImage tmp = new BufferedImage(
 				buf.getWidth(),
 				buf.getHeight(),
@@ -173,6 +214,8 @@ public class Image {
 			);
 			tmp.getGraphics().drawImage(buf, 0, 0, null);
 			buf = tmp;
+			long executionTime = System.currentTimeMillis() - startTime;
+			System.out.println("Converting image took: " + executionTime + "ms");
 		}
 		return new Image(buf, true);
 	}

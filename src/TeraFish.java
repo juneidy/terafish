@@ -27,6 +27,8 @@ public class TeraFish{
 	public static final int[] WHITE = new int[]{ 255, 255, 255 };
 
 	private static final Rectangle SCREEN = new Rectangle(0, 0, 1920, 1080);
+	private static final int[] INVENT_FRAME = new int[]{ 22, 28, 35 };
+	private static final int[] INVENT_EMPTY_SLOT = new int[]{ 16, 20, 24 };
 
 	public static void main(String[] args){
 		try{
@@ -52,24 +54,37 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				//Image i = new Image(screenshot(SCREEN), false);
-				Image i = Image.loadTestImage("inventory-medium.png");
-				i.setRgb(
-					Preprocess.filterColour(
-						i.getRgb(),
-						new int[]{ 22, 28, 35 },
-						2
-					)
+				Image i = Image.loadTestImage("inventory-small.png");
+				i.cacheGrey(
+					Preprocess.filterColour(i, INVENT_FRAME, 1)
 				);
-				i.cacheGrey();
 				Blob[] blobs = Blobbing.getBlobs(i);
+				Blob inventory = null;
 				for(Blob b : blobs){
-					if(b.getBrightness(i) > 1000000){
-						System.out.println(b.toString());
+					b.getBrightness(i);
+					System.out.println(b.toString());
+					if(inventory==null){
+						inventory = b;
+					}else if(inventory.getBrightness() < b.getBrightness()){
+						inventory = b;
 					}
 				}
+
+				final Image inv = i.crop(inventory);
+				inv.cacheGrey(
+					Preprocess.filterColour(inv, INVENT_EMPTY_SLOT, 1)
+				);
+				blobs = Blobbing.getBlobs(
+					inv,
+					b -> b.isReasonableSize() && b.getBrightnessRatio(inv) > 0.8
+				);
+				for(Blob b : blobs){
+					System.out.println(b.toString());
+				}
+
 				long executionTime = System.currentTimeMillis() - startTime;
 				System.out.println("Execution time: " + executionTime + "ms");
-				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				ImageIO.write(inv.toBufferedImage(), FORMAT, debugOutput);
 			}else{
 				System.out.println("System is starting in 3 seconds");
 				Thread.sleep(3000);

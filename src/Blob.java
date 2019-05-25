@@ -14,6 +14,7 @@ public class Blob {
 	 */
 	private Point bottomRight;
 	private int brightness;
+	private double brightnessRatio;
 
 	/**
 	 * Construct with given top-left and bottom-right point
@@ -21,6 +22,11 @@ public class Blob {
 	public Blob(Point inTopLeft, Point inBottomRight) {
 		topLeft = inTopLeft;
 		bottomRight = inBottomRight;
+	}
+
+	public double getBrightnessRatio(Image i){
+		getBrightness(i);
+		return brightnessRatio;
 	}
 
 	public int getBrightness(Image i){
@@ -31,6 +37,8 @@ public class Blob {
 				brightness += g[ii][jj];
 			}
 		}
+		double max = getHeight() * getWidth() * 255f;
+		brightnessRatio = (double)brightness / max;
 		return brightness;
 	}
 
@@ -52,6 +60,14 @@ public class Blob {
 
 	public int getRight() {
 		return bottomRight.x;
+	}
+
+	public int getHeight(){
+		return bottomRight.y - topLeft.y + 1;
+	}
+
+	public int getWidth(){
+		return bottomRight.x - topLeft.x + 1;
 	}
 
 	public boolean isReasonableSize(){
@@ -84,6 +100,7 @@ public class Blob {
 	public String toString() {
 		return "Top is " + getTop() + ", bottom is " + getBottom() +
 			", left is " + getLeft() + ", right is " + getRight() +
-			", brightness is " + brightness;
+			", height is " + getHeight() + ", width is " + getWidth() +
+			", brightness is " + brightness + ", brightness ratio is " + brightnessRatio;
 	}
 }   

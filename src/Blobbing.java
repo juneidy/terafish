@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -16,6 +17,10 @@ import java.util.stream.Collectors;
  */
 public class Blobbing {
 	public static Blob[] getBlobs(Image img){
+		return getBlobs(img, null);
+	}
+
+	public static Blob[] getBlobs(Image img, Predicate<Blob> filter){
 		int[][] grey = img.getGrey();
 		boolean[][] visited = new boolean[img.height][img.width];
 
@@ -29,7 +34,7 @@ public class Blobbing {
 
 		List<TreeSet<Integer>> labels = new ArrayList<TreeSet<Integer>>();
 		firstLabel(labelPix, labels);
-		return connectLabel(labelPix, labels);
+		return connectLabel(labelPix, labels, filter);
 	}
 
 	/**
@@ -128,7 +133,8 @@ public class Blobbing {
 	 */
 	private static Blob[] connectLabel(
 		int[][] labelPix,
-		List<TreeSet<Integer>> labels
+		List<TreeSet<Integer>> labels,
+		Predicate<Blob> filter
 	) {
 		int height = labelPix.length;
 		int width = labelPix[0].length;
@@ -165,8 +171,11 @@ public class Blobbing {
 				}
 			}
 		}
+		if(filter==null){
+			filter = b -> b.isReasonableSize();
+		}
 		return Arrays.stream(blobs.values().toArray(new Blob[0]))
-		.filter(b -> b.isReasonableSize())
+		.filter(filter)
 		.toArray(Blob[]::new);
 	}
 }
