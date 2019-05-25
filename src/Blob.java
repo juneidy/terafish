@@ -23,7 +23,7 @@ public class Blob {
 		bottomRight = inBottomRight;
 	}
 
-	public int calculateWhiteness(Image i){
+	public int getBrightness(Image i){
 		int[][] g = i.getGrey();
 		brightness = 0;
 		for(int ii = getTop(); ii <= bottomRight.y; ii++){
@@ -31,6 +31,10 @@ public class Blob {
 				brightness += g[ii][jj];
 			}
 		}
+		return brightness;
+	}
+
+	public int getBrightness(){
 		return brightness;
 	}
 

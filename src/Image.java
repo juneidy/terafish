@@ -23,7 +23,6 @@ public class Image {
 		width = raster.getWidth();
 		type = buf.getType();
 
-		DataBuffer dataBuf = raster.getDataBuffer();
 		rgb = new int[3 * height * width];
 		raster.getPixels(0, 0, width, height, rgb);
 		if(isGrey){
@@ -57,6 +56,18 @@ public class Image {
 		}
 	}
 
+	public void cacheGrey(){
+		grey = new int[height][width];
+		for(int ii = height - 1; ii >= 0; ii--){
+			for(int jj = width - 1; jj >= 0; jj--){
+				int rgbPos = (ii * width + jj) * 3;
+				grey[ii][jj] = (
+					(rgb[rgbPos] + rgb[rgbPos + 1] + rgb[rgbPos + 2]) / 3
+				);
+			}
+		}
+	}
+
 	public void cacheGrey(int[][] grey){
 		this.grey = grey;
 	}
@@ -76,7 +87,6 @@ public class Image {
 		BufferedImage buf = new BufferedImage(width, height, type);
 		WritableRaster raster = buf.getRaster();
 
-		DataBuffer dataBuf = raster.getDataBuffer();
 		raster.setPixels(0, 0, width, height, rgb);
 		return buf;
 	}
@@ -148,9 +158,22 @@ public class Image {
 		int height = raster.getHeight();
 		int width = raster.getWidth();
 
-		DataBuffer dataBuf = raster.getDataBuffer();
 		int[] rgb = new int[3 * height * width];
 		raster.getPixels(0, 0, width, height, rgb);
 		return rgb;
+	}
+
+	public static Image loadTestImage(String f)throws IOException{
+		BufferedImage buf = ImageIO.read(new File("testfile/" + f));
+		if(buf.getType()!=BufferedImage.TYPE_INT_RGB){
+			BufferedImage tmp = new BufferedImage(
+				buf.getWidth(),
+				buf.getHeight(),
+				BufferedImage.TYPE_INT_RGB
+			);
+			tmp.getGraphics().drawImage(buf, 0, 0, null);
+			buf = tmp;
+		}
+		return new Image(buf, true);
 	}
 }
