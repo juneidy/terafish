@@ -28,7 +28,6 @@ public class TeraFish{
 
 	private static final Rectangle SCREEN = new Rectangle(0, 0, 1920, 1080);
 	private static final int[] INVENT_FRAME = new int[]{ 22, 28, 35 };
-	private static final int[] INVENT_EMPTY_SLOT = new int[]{ 16, 20, 24 };
 
 	public static void main(String[] args){
 		try{
@@ -54,7 +53,7 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				//Image i = new Image(screenshot(SCREEN), false);
-				Image i = Image.loadTestImage("inventory-small.png");
+				Image i = Image.loadTestImage("inventory-big.png");
 				i.cacheGrey(
 					Preprocess.filterColour(i, INVENT_FRAME, 1)
 				);
@@ -70,21 +69,31 @@ public class TeraFish{
 					}
 				}
 
-				final Image inv = i.crop(inventory);
-				inv.cacheGrey(
-					Preprocess.filterColour(inv, INVENT_EMPTY_SLOT, 1)
-				);
-				blobs = Blobbing.getBlobs(
-					inv,
-					b -> b.isReasonableSize() && b.getBrightnessRatio(inv) > 0.8
-				);
-				for(Blob b : blobs){
-					System.out.println(b.toString());
-				}
+				Inventory inv = new Inventory(i.crop(inventory), inventory);
+
+				//inv.matches(Image.loadRgbImage("src/fish6-mottled-ray.tpl"), false);
+				inv.matches(Image.loadRgbImage("src/bait5.tpl"), true);
+
+				//System.out.println(
+				//	Preprocess.sumOfAbsoluteRatio(
+				//		Preprocess.resize(
+				//			inv.crop(getInventSlot(3, 0)),
+				//			tpl.width,
+				//			tpl.height
+				//		).getRgb(),
+				//		tpl.getRgb()
+				//	)
+				//);
+
+				//Image iFish = inv.crop(getInventSlot(1, 1));
+
+				//Image bait = inv.crop(3, 2, true);
+				// active ignore border buffer 0.12
+				//bait = bait.crop(0, 0, bait.width, (int)(bait.height * 0.74));
 
 				long executionTime = System.currentTimeMillis() - startTime;
 				System.out.println("Execution time: " + executionTime + "ms");
-				ImageIO.write(inv.toBufferedImage(), FORMAT, debugOutput);
+				//ImageIO.write(bait.toBufferedImage(), FORMAT, debugOutput);
 			}else{
 				System.out.println("System is starting in 3 seconds");
 				Thread.sleep(3000);

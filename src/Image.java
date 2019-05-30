@@ -36,7 +36,7 @@ public class Image {
 		}
 	}
 
-	private Image(int h, int w, int[] rgb){
+	public Image(int h, int w, int[] rgb){
 		height = h;
 		width = w;
 		this.rgb = rgb;
@@ -53,17 +53,35 @@ public class Image {
 
 		int top = b.getTop();
 		int left = b.getLeft();
-		for(int ii = 0; ii < height; ii++){
-			for(int jj = 0; jj < width; jj++){
+		for(int ii = height - 1; ii >= 0; ii--){
+			for(int jj = width - 1; jj >= 0; jj--){
 				int origPos = ((ii + top) * this.width + (jj + left)) * 3;
 				int croppedPos = (ii * width + jj) * 3;
-				for(int kk = 0; kk < 3; kk++){
+				for(int kk = 2; kk >= 0; kk--){
 					rgb[croppedPos + kk] = this.rgb[origPos + kk];
 				}
 			}
 		}
 
 		return new Image(height, width, rgb);
+	}
+
+	/**
+	 * Returns a copy of cropped image
+	 */
+	public Image crop(int left, int top, int w, int h){
+		int[] rgb = new int[3 * h * w];
+		for(int ii = h - 1; ii >= 0; ii--){
+			for(int jj = w - 1; jj >= 0; jj--){
+				int origPos = ((ii + top) * width + (jj + left)) * 3;
+				int croppedPos = (ii * w + jj) * 3;
+				for(int kk = 2; kk >= 0; kk--){
+					rgb[croppedPos + kk] = this.rgb[origPos + kk];
+				}
+			}
+		}
+
+		return new Image(h, w, rgb);
 	}
 
 	public int[] getRgb(){
@@ -139,6 +157,17 @@ public class Image {
 		int[] rgb = new int[3 * height * width];
 		raster.getPixels(0, 0, width, height, rgb);
 		return rgb;
+	}
+
+	public static Image loadRgbImage(String f)throws IOException{
+		WritableRaster raster = ImageIO.read(new File(f)).getRaster();
+		int height = raster.getHeight();
+		int width = raster.getWidth();
+
+		int[] rgb = new int[3 * height * width];
+		raster.getPixels(0, 0, width, height, rgb);
+
+		return new Image(height, width, rgb);
 	}
 
 	/**

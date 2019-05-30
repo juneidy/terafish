@@ -99,6 +99,27 @@ public class Preprocess {
 		return total / (double)(len * 255 * 3);
 	}
 
+	public static double sumOfAbsoluteRatio(Image a, Image b, double borderIgnore){
+		//0.03
+		int minX = (int)(a.width * borderIgnore);
+		int minY = (int)(a.height * borderIgnore);
+		int maxX = (int)(a.width * (1.0 - borderIgnore));
+		int maxY = (int)(a.height * (1.0 - borderIgnore));
+		int total = 0;
+		int[] aRgb = a.getRgb();
+		int[] bRgb = b.getRgb();
+		for(int ii = minY; ii < maxY; ii++){
+			for(int jj = minX; jj < maxX; jj++){
+				int pos = (ii * a.width + jj) * 3;
+				for(int kk = 2; kk >= 0; kk--){
+					int idx = pos+kk;
+					total += Math.abs(aRgb[idx] - bRgb[idx]);
+				}
+			}
+		}
+		return total / (double)(((maxX - minX) * (maxY - minY)) * 255 * 3);
+	}
+
 	public static int[][] filterColour(Image i, int[] c, int tolerance){
 		int[][] filtered = new int[i.height][i.width];
 		int[] rgb = i.getRgb();
@@ -119,5 +140,31 @@ public class Preprocess {
 		}
 
 		return filtered;
+	}
+
+	/**
+	 * Resizing image
+	 * @param img The image to rescale
+	 * @param w the desired width
+	 * @param h the desired height
+	 */
+	public static Image resize(Image img, int w, int h){
+		int[] in = img.getRgb();
+		int[] out = new int[w * h * 3];
+
+		double dx = (double)img.width / (double)w,
+				 dy = (double)img.height / (double)h;
+
+		for(int ii = h - 1; ii >= 0; ii--){
+			for(int jj = w - 1; jj >= 0; jj--){
+				int outPos = (ii * w + jj) * 3;
+				int inPos = ((int)(ii*dy) * img.width + (int)(jj*dx)) * 3;
+				for(int kk = 2; kk >= 0; kk--){
+					out[outPos + kk] = in[inPos + kk];
+				}
+			}
+		}
+
+		return new Image(h, w, out);
 	}
 }
