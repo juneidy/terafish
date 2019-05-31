@@ -71,10 +71,15 @@ public class Blob {
 	}
 
 	public boolean isReasonableSize(){
-		return (
-			(getBottom() - getTop() > 10) &&
-			(getRight() - getLeft() > 10)
-		);
+		return getHeight() > 10 && getWidth() > 10;
+	}
+
+	public boolean isReasonableInventorySize(){
+		return getWidth() > 200 && getHeight() > 250;
+	}
+
+	public boolean isReasonableDismantleSize(){
+		return getWidth() > 300 && getHeight() > 400;
 	}
 
 	public Blob setTop(int inTop) {

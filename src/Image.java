@@ -17,7 +17,7 @@ public class Image {
 	private int[][] grey;
 	private int type;
 
-	public Image(BufferedImage buf, boolean isGrey){
+	public Image(BufferedImage buf){
 		WritableRaster raster = buf.getRaster();
 		height = raster.getHeight();
 		width = raster.getWidth();
@@ -25,6 +25,10 @@ public class Image {
 
 		rgb = new int[3 * height * width];
 		raster.getPixels(0, 0, width, height, rgb);
+	}
+
+	public Image(BufferedImage buf, boolean isGrey){
+		this(buf);
 		if(isGrey){
 			grey = new int[height][width];
 			for(int ii = height - 1; ii >= 0; ii--){

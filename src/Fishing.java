@@ -1,5 +1,4 @@
 import java.awt.Rectangle;
-import java.awt.Robot;
 
 import java.awt.event.KeyEvent;
 
@@ -68,7 +67,7 @@ public class Fishing{
 					break;
 				case START_FISH:
 					if(isTimeToFish()){
-						TeraFish.pressKey(KeyEvent.VK_F, 200);
+						TeraFish.pressKey(KeyEvent.VK_F);
 						fishingStarted = System.currentTimeMillis();
 						Thread.sleep(TIME_TO_FISH_BUFFER);
 						state = State.FISH;
@@ -95,7 +94,7 @@ public class Fishing{
 		}
 	}
 	public static void continueFish()throws IOException{
-		Image i = new Image(TeraFish.screenshot(GAUGE), false);
+		Image i = new Image(TeraFish.screenshot(GAUGE));
 		Preprocess.histogram(i);
 		Blob[] blobs = Blobbing.getBlobs(i);
 		if(blobs.length==2){
@@ -187,7 +186,7 @@ public class Fishing{
 	private static boolean isTimeToFish(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
 			fTpl,
-			Preprocess.getGrey(new Image(TeraFish.screenshot(F), false))
+			Preprocess.getGrey(new Image(TeraFish.screenshot(F)))
 		);
 
 		return ratio < F_RATIO;
@@ -196,7 +195,7 @@ public class Fishing{
 	private static boolean isFinishedFishing(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
 			gaugeFrameTpl,
-			(new Image(TeraFish.screenshot(GAUGE_FRAME), false)).getRgb()
+			(new Image(TeraFish.screenshot(GAUGE_FRAME))).getRgb()
 		);
 
 		return ratio > FRAME_RATIO;
