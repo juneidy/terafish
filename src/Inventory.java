@@ -138,6 +138,7 @@ public class Inventory{
 						InputEvent.BUTTON3_DOWN_MASK
 					);
 					max--;
+					Thread.sleep(500);
 				}
 			}
 		}
