@@ -31,22 +31,26 @@ public class TeraFish{
 	private static final int maxFish = 55;
 
 	private static final Image[] fishToDismantle;
-	private static final Image bait;
+	private static final Image[] bait;
+	private static final Image[] fillet;
 	public static final Robot r;
 	static{
 		Robot tmpR = null;
 		Image[] tmpDismantle = null;
 		Image tmpBait = null;
+		Image tmpFillet = null;
 		try{
 			tmpR = new Robot();
 			tmpDismantle = new Image[]{
 				//Image.loadRgbImage("fish6-mottled-ray.tpl"),
-				//Image.loadRgbImage("fish7-yellowfin.tpl"),
+				Image.loadRgbImage("fish7-yellowfin.tpl"),
 				//Image.loadRgbImage("fish7-gula-shark.tpl"),
-				Image.loadRgbImage("fish7-electric-eel.tpl"),
-				Image.loadRgbImage("fish8-stone-octopus.tpl"),
+				//Image.loadRgbImage("fish7-electric-eel.tpl"),
+				//Image.loadRgbImage("fish8-stone-octopus.tpl"),
+				Image.loadRgbImage("fish8-prism-carp.tpl"),
 			};
 			tmpBait = Image.loadRgbImage("bait5.tpl");
+			tmpFillet = Image.loadRgbImage("fillet.tpl");
 		}catch(AWTException ex){
 			System.out.println("Error creating robot " + ex);
 			System.exit(1);
@@ -56,12 +60,13 @@ public class TeraFish{
 		}finally{
 			r = tmpR;
 			fishToDismantle = tmpDismantle;
-			bait = tmpBait;
+			bait = new Image[]{ tmpBait };
+			fillet = new Image[]{ tmpFillet };
 		}
 	}
 
 	// Debug vars
-	public static final boolean debug = false;
+	public static final boolean debug = true;
 	public static final String FORMAT = "png";
 	public static final File debugOutput = new File("/tmp/foo");
 	public static final int[] WHITE = new int[]{ 255, 255, 255 };
@@ -93,7 +98,7 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To extract fish tpl
-				//Image i = getTpl(Image.loadTestImage("fish.png"), 1, 1);
+				//Image i = getTpl(Image.loadTestImage("grade8-prism-carp.png"), 3, 0);
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To test the dismantle
@@ -291,6 +296,8 @@ public class TeraFish{
 		Thread.sleep(4000);
 	}
 	private static void reloadBait()throws InterruptedException{
+		LinkedList<int[]> matches;
+
 		resetMouse();
 		Thread.sleep(1000);
 		pressKey(petKey);
@@ -301,7 +308,20 @@ public class TeraFish{
 		Thread.sleep(1000);
 
 		updateInventory(screenshot());
-		LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
+		// Transfer fillet
+		matches = main.matches(fillet, true);
+		Thread.sleep(1000);
+		if(matches.size()==1){
+			click(
+				main.getInventCentroid(matches.peek()),
+				InputEvent.BUTTON3_DOWN_MASK
+			);
+		}else{
+			throw new IllegalStateException("Identified " + matches.size() + " fillet");
+		}
+		
+		// Transfer bait
+		matches = pet.matches(bait, true);
 		Thread.sleep(1000);
 		dragAndDrop(
 			pet.getInventCentroid(matches.peek()),
@@ -335,14 +355,6 @@ public class TeraFish{
 		pressKey(petKey);
 		Thread.sleep(1000);
 		resetMouse();
-
-		//Not needed anymore
-		//updateInventory(screenshot());
-		//matches = main.matches(new Image[]{ bait }, true);
-		//click(
-		//	main.getInventCentroid(matches.peek()),
-		//	InputEvent.BUTTON3_DOWN_MASK
-		//);
 	}
 	private static Image getTpl(Image i, int x, int y){
 		findInventories(i);
