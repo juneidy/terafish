@@ -40,9 +40,11 @@ public class TeraFish{
 		try{
 			tmpR = new Robot();
 			tmpDismantle = new Image[]{
-				Image.loadRgbImage("fish6-mottled-ray.tpl"),
-				Image.loadRgbImage("fish7-yellowfin.tpl"),
-				Image.loadRgbImage("fish7-gula-shark.tpl")
+				//Image.loadRgbImage("fish6-mottled-ray.tpl"),
+				//Image.loadRgbImage("fish7-yellowfin.tpl"),
+				//Image.loadRgbImage("fish7-gula-shark.tpl"),
+				Image.loadRgbImage("fish7-electric-eel.tpl"),
+				Image.loadRgbImage("fish8-stone-octopus.tpl"),
 			};
 			tmpBait = Image.loadRgbImage("bait5.tpl");
 		}catch(AWTException ex){
@@ -89,15 +91,24 @@ public class TeraFish{
 				//}
 				//i.toGrey();
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
-				//Image i = getTpl(Image.loadTestImage("shark.png"), 5, 1);
+
+				// To extract fish tpl
+				//Image i = getTpl(Image.loadTestImage("fish.png"), 1, 1);
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
-				System.out.println("System is starting in 3 seconds");
-				Thread.sleep(3000);
+				// To test the dismantle
+				//findInventories(Image.loadTestImage("fish.png"));
+				//LinkedList<int[]> matches = main.matches(fishToDismantle, false);
+				//for(int[] pos : matches){
+				//	System.out.println(pos[0] + ", " + pos[1]);
+				//}
 
-				initState();
-				dismantle();
-				reloadBait();
+				//System.out.println("System is starting in 3 seconds");
+				//Thread.sleep(3000);
+
+				//initState();
+				//dismantle();
+				//reloadBait();
 
 				long executionTime = System.currentTimeMillis() - startTime;
 				System.out.println("Execution time: " + executionTime + "ms");
