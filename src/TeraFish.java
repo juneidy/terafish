@@ -12,17 +12,49 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
 public class TeraFish{
-	public static Robot r;
+	private static final Rectangle SCREEN = new Rectangle(0, 0, 1920, 1080);
+	private static final int[] INVENT_FRAME = new int[]{ 22, 28, 35 };
+	private static final int[] DISMANTLE_AREA = new int[]{ 2, 11, 19 };
+	private static final int[] BAIT_NUMBER = new int[]{ 16, 20, 24 };
+	private static Inventory main;
+	private static Inventory pet;
+
+	private static final int petStorageKey = KeyEvent.VK_X;
+	private static final int inventKey = KeyEvent.VK_I;
+	private static final int petKey = KeyEvent.VK_BACK_QUOTE;
+	private static final int petFoodKey = KeyEvent.VK_F3;
+	private static final int maxFish = 55;
+
+	private static final Image[] fishToDismantle;
+	private static final Image bait;
+	public static final Robot r;
 	static{
+		Robot tmpR = null;
+		Image[] tmpDismantle = null;
+		Image tmpBait = null;
 		try{
-			r = new Robot();
+			tmpR = new Robot();
+			tmpDismantle = new Image[]{
+				Image.loadRgbImage("fish6-mottled-ray.tpl"),
+				Image.loadRgbImage("fish7-yellowfin.tpl"),
+				Image.loadRgbImage("fish7-gula-shark.tpl")
+			};
+			tmpBait = Image.loadRgbImage("bait5.tpl");
 		}catch(AWTException ex){
 			System.out.println("Error creating robot " + ex);
 			System.exit(1);
+		}catch(IOException ex){
+			System.out.println("Error loading template " + ex);
+			System.exit(1);
+		}finally{
+			r = tmpR;
+			fishToDismantle = tmpDismantle;
+			bait = tmpBait;
 		}
 	}
 
@@ -32,149 +64,80 @@ public class TeraFish{
 	public static final File debugOutput = new File("/tmp/foo");
 	public static final int[] WHITE = new int[]{ 255, 255, 255 };
 
-	private static final Rectangle SCREEN = new Rectangle(0, 0, 1920, 1080);
-	private static final int[] INVENT_FRAME = new int[]{ 22, 28, 35 };
-	private static final int[] DISMANTLE_AREA = new int[]{ 2, 11, 19 };
-	private static Inventory main;
-	private static Inventory pet;
-
 	public static void main(String[] args){
 		try{
 			if(debug){
 				long startTime = System.currentTimeMillis();
-
-				//continueFish();
-
-				//Image i = new Image(r.createScreenCapture(gaugeFrame));
-
-				//double ratio = Preprocess.sumOfAbsoluteRatio(
-				//	gaugeFrameTpl,
-				//	i.getRgb()
-				//);
-
-				//System.out.println("ratio is " + ratio);
-				//if(ratio < 0.01){
-				//	System.out.println("not yet!");
-				//}else{
-				//	System.out.println("Finished fishing!");
-				//}
-
-				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
-
-				//Image i = new Image(screenshot());
-				//Image i = Image.loadTestImage("pet-small.png");
-				//i.cacheGrey(
-				//	Preprocess.filterColour(i, INVENT_FRAME, 1)
-				//);
-				//Blob[] blobs = Blobbing.getBlobs(
-				//	i,
-				//	b -> b.isReasonableInventorySize()
-				//);
-				//Blob inventory = null;
-				//for(Blob b : blobs){
-				//	b.getBrightness(i);
-				//	System.out.println(b.toString());
-				//	if(inventory==null){
-				//		inventory = b;
-				//	}else if(inventory.getBrightness() < b.getBrightness()){
-				//		inventory = b;
-				//	}
-				//}
-
-				//Inventory inv = new Inventory(i.crop(inventory), inventory);
-
-				Image i = Image.loadTestImage("dismantling-empty.png");
-				i.cacheGrey(
-					Preprocess.filterColour(i, DISMANTLE_AREA, 0)
-				);
-				Blob[] blobs = Blobbing.getBlobs(i);
-				for(Blob b : blobs){
-					b.getBrightness(i);
-					System.out.println(b.toString());
-				}
-				i.toGrey();
-
 				//dismantle offset x: +70, y: +50
 
-				//inv.matches(Image.loadRgbImage("src/fish6-mottled-ray.tpl"), false);
-				//inv.matches(Image.loadRgbImage("src/bait5.tpl"), true);
+				//Image i = Image.loadTestImage("pet-big.png");
+				//findInventories(i);
+				//LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
 
-				//System.out.println(
-				//	Preprocess.sumOfAbsoluteRatio(
-				//		Preprocess.resize(
-				//			inv.crop(getInventSlot(3, 0)),
-				//			tpl.width,
-				//			tpl.height
-				//		).getRgb(),
-				//		tpl.getRgb()
-				//	)
+				//for(int[] pos : matches){
+				//	System.out.println(pos[0] + ", " + pos[1]);
+				//}
+				//Image i = Image.loadTestImage("bait-number.png");
+				//i.cacheGrey(Preprocess.filterColour(i, BAIT_NUMBER, 3));
+				//Blob[] blobs = Blobbing.getBlobs(
+				//	i,
+				//	b -> b.isReasonableBaitOkSize()
 				//);
+				////offset topleft +150, +16
+				//for(Blob b : blobs){
+				//	System.out.println(b.toString());
+				//}
+				//i.toGrey();
+				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				//Image i = getTpl(Image.loadTestImage("shark.png"), 5, 1);
+				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
-				//Image iFish = inv.crop(getInventSlot(1, 1));
+				System.out.println("System is starting in 3 seconds");
+				Thread.sleep(3000);
 
-				//Image bait = inv.crop(3, 2, true);
-				// active ignore border buffer 0.12
-				//bait = bait.crop(0, 0, bait.width, (int)(bait.height * 0.74));
+				initState();
+				dismantle();
+				reloadBait();
 
 				long executionTime = System.currentTimeMillis() - startTime;
 				System.out.println("Execution time: " + executionTime + "ms");
-				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				//Thread.sleep(120000);
 			}else{
 				System.out.println("System is starting in 3 seconds");
 				Thread.sleep(3000);
 
-				pressKey(KeyEvent.VK_I);
-				//pressKey(KeyEvent.VK_X);
+				initState();
 
-				Thread.sleep(2000);
-
-				Image i = new Image(screenshot());
-				i.cacheGrey(Preprocess.filterColour(i, INVENT_FRAME, 1));
-				Blob[] blobs = Blobbing.getBlobs(
-					i,
-					b -> b.isReasonableInventorySize()
-				);
-
-				Inventory[] inventories = Arrays.stream(blobs)
-					.map(b -> new Inventory(i.crop(b), b))
-					.filter(inv -> inv.getType()!=Inventory.Type.UNKNOWN)
-					.toArray(Inventory[]::new);
-
-				for(Inventory in : inventories){
-					if(in.getType()==Inventory.Type.MAIN){
-						main = in;
-					}else if(in.getType()==Inventory.Type.PET){
-						pet = in;
+				int fished = 0;
+				int totalFish = 0;
+				while(true){
+					if(fished < maxFish){
+						Fishing.fish();
+						fished++;
+						totalFish++;
+						System.out.println("Fished " + totalFish);
+					}else{
+						dismantle();
+						reloadBait();
+						fished = 0;
 					}
 				}
-
-				click(main.getDismantlePos(), InputEvent.BUTTON1_DOWN_MASK);
-
-				Image dismantle = new Image(screenshot());
-				i.cacheGrey(
-					Preprocess.filterColour(i, DISMANTLE_AREA, 0)
-				);
-				blobs = Blobbing.getBlobs(
-					i,
-					b -> b.isReasonableDismantleSize()
-				);
-
-				Blob dis;
-				if(blobs.length==1){
-					dis = blobs[0];
-				}
-
-				main.dismantle(Image.loadRgbImage("fish6-mottled-ray.tpl"));
-
-				//while(true){
-				//	Fishing.fish();
-				//}
-				Thread.sleep(120000);
 			}
 		}catch(Exception ex){
 			System.out.println("exception " + ex);
 			ex.printStackTrace();
 		}
+	}
+	private static void initState()throws InterruptedException{
+		resetMouse();
+		pressKey(petKey);
+		Thread.sleep(1000);
+		pressKey(petStorageKey);
+		Thread.sleep(1000);
+		findInventories();
+		Thread.sleep(1000);
+		pressKey(petKey);
+		Thread.sleep(1000);
 	}
 	public static void pressKey(int key)throws InterruptedException{
 		pressKey(key, 200);
@@ -184,14 +147,33 @@ public class TeraFish{
 		Thread.sleep(millis);
 		r.keyRelease(key);
 	}
-	public static void click(Point p, int key)throws InterruptedException{
-		System.out.println("moving to " + p.x + ", " + p.y);
-		r.mouseMove(p.x, p.y);
+	public static void click(Point pos, int key)throws InterruptedException{
+		click(pos.x, pos.y, key);
+	}
+	private static void resetMouse()throws InterruptedException{
+		r.mouseMove(0, 1079);
+	}
+	private static void mouseMove(int x, int y)throws InterruptedException{
+		r.mouseMove(x, y);
 		Thread.sleep(100);
-		r.mouseMove(p.x + 1, p.y + 1);
+		r.mouseMove(x + 1, y + 1);
+	}
+	public static void click(int x, int y, int key)throws InterruptedException{
+		mouseMove(x, y);
+
 		Thread.sleep(200);
-		System.out.println("Clicking");
+
 		r.mousePress(key);
+		r.mouseRelease(key);
+	}
+	public static void dragAndDrop(Point a, Point b)throws InterruptedException{
+		int key = InputEvent.BUTTON1_DOWN_MASK;
+		mouseMove(a.x, a.y);
+		Thread.sleep(500);
+		r.mousePress(key);
+		Thread.sleep(500);
+		mouseMove(b.x, b.y);
+		Thread.sleep(500);
 		r.mouseRelease(key);
 	}
 	public static void printDebug(Image i, Blob[] blobs)throws IOException{
@@ -202,10 +184,157 @@ public class TeraFish{
 		}
 		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 	}
-	public static BufferedImage screenshot(){
+	public static Image screenshot(){
 		return screenshot(SCREEN);
 	}
-	public static BufferedImage screenshot(Rectangle rec){
-		return r.createScreenCapture(rec);
+	public static Image screenshot(Rectangle rec){
+		return new Image(r.createScreenCapture(rec), false);
+	}
+
+	private static void findInventories(){
+		findInventories(screenshot());
+	}
+	private static Blob[] getInventoryBlob(Image i){
+		i.cacheGrey(Preprocess.filterColour(i, INVENT_FRAME, 1));
+		return Blobbing.getBlobs(
+			i,
+			b -> b.isReasonableInventorySize()
+		);
+	}
+	private static void findInventories(Image i){
+		Blob[] blobs = getInventoryBlob(i);
+
+		Inventory[] inventories = Arrays.stream(blobs)
+			.map(b -> new Inventory(i.crop(b), b))
+			.filter(inv -> inv.getType()!=Inventory.Type.UNKNOWN)
+			.toArray(Inventory[]::new);
+
+		for(Inventory in : inventories){
+			if(in.getType()==Inventory.Type.MAIN){
+				main = in;
+			}else if(in.getType()==Inventory.Type.PET){
+				pet = in;
+			}
+		}
+	}
+	private static void dismantle()throws InterruptedException, IOException{
+		resetMouse();
+		Blob[] blobs;
+		Image i;
+
+		Thread.sleep(1000);
+		i = screenshot();
+		updateInventory(i);
+
+		main.openDismantle();
+
+		Thread.sleep(1000);
+
+		i = screenshot();
+		i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 0));
+		blobs = Blobbing.getBlobs(
+			i,
+			b -> b.isReasonableDismantleSize()
+		);
+		Blob dismantleBlob;
+		if(blobs.length==1){
+			dismantleBlob = blobs[0];
+		}else{
+			throw new IllegalStateException("failed to detect dismantle");
+		}
+
+		Point dismantleBtn = new Point(
+			dismantleBlob.getLeft() + 70,
+			dismantleBlob.getBottom() + 50
+		);
+
+		selectAndDismantle(dismantleBtn);
+		// Try it again just to be sure
+		resetMouse();
+		updateInventory(screenshot());
+		selectAndDismantle(dismantleBtn);
+		resetMouse();
+	}
+	private static void updateInventory(Image i){
+		Blob[] blobs = getInventoryBlob(i);
+		int ii = blobs.length - 1;
+		while(ii >=0 && !main.update(i, blobs[ii])){ ii--; }
+	}
+	private static void selectAndDismantle(Point dismantle)throws InterruptedException, IOException{
+		LinkedList<int[]> matches = main.matches(fishToDismantle, false);
+
+		int inserted = 0;
+		for(int[] match : matches){
+			click(
+				main.getInventCentroid(match),
+				InputEvent.BUTTON3_DOWN_MASK
+			);
+			Thread.sleep(500);
+			inserted++;
+			if(inserted % 20 == 19){
+				click(dismantle, InputEvent.BUTTON1_DOWN_MASK);
+				Thread.sleep(4000);
+			}
+		}
+		click(dismantle, InputEvent.BUTTON1_DOWN_MASK);
+		Thread.sleep(4000);
+	}
+	private static void reloadBait()throws InterruptedException{
+		resetMouse();
+		Thread.sleep(1000);
+		pressKey(petKey);
+		Thread.sleep(1000);
+		pressKey(petFoodKey);
+		Thread.sleep(1000);
+		pressKey(petStorageKey);
+		Thread.sleep(1000);
+
+		updateInventory(screenshot());
+		LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
+		Thread.sleep(1000);
+		dragAndDrop(
+			pet.getInventCentroid(matches.peek()),
+			main.getInventCentroid(7, 0)
+		);
+		Thread.sleep(1000);
+		pressKey(KeyEvent.VK_6);
+		Thread.sleep(200);
+		pressKey(KeyEvent.VK_6);
+
+		Image i = screenshot();
+		i.cacheGrey(Preprocess.filterColour(i, BAIT_NUMBER, 3));
+		Blob[] blobs = Blobbing.getBlobs(
+			i,
+			b -> b.isReasonableBaitOkSize()
+		);
+		Blob okBtn = null;
+		if(blobs.length==1){
+			okBtn = blobs[0];
+		}else{
+			throw new IllegalStateException("failed to ok button");
+		}
+
+		click(
+			okBtn.getLeft() + 150,
+			okBtn.getTop() + 16,
+			InputEvent.BUTTON1_DOWN_MASK
+		);
+
+		Thread.sleep(1000);
+		pressKey(petKey);
+		Thread.sleep(1000);
+		resetMouse();
+
+		//Not needed anymore
+		//updateInventory(screenshot());
+		//matches = main.matches(new Image[]{ bait }, true);
+		//click(
+		//	main.getInventCentroid(matches.peek()),
+		//	InputEvent.BUTTON3_DOWN_MASK
+		//);
+	}
+	private static Image getTpl(Image i, int x, int y){
+		findInventories(i);
+		return main.crop(x, y, false);
 	}
 }

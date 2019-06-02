@@ -82,6 +82,12 @@ public class Blob {
 		return getWidth() > 300 && getHeight() > 400;
 	}
 
+	public boolean isReasonableBaitOkSize(){
+		int w = getWidth();
+		int h = getHeight();
+		return w > 370 && w < 410 && h > 30 && h < 42;
+	}
+
 	public Blob setTop(int inTop) {
 		topLeft.y = inTop;
 		return this;

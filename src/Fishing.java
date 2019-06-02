@@ -54,8 +54,9 @@ public class Fishing{
 	public static void fish()throws IOException, InterruptedException{
 		needCheckGolden = true;
 		golden = false;
+		state = State.START;
 		while(state!=State.FINISHED){
-			long startTime = System.currentTimeMillis();
+			//long startTime = System.currentTimeMillis();
 			switch(state){
 				case START:
 					TeraFish.pressKey(KeyEvent.VK_R, 3000);
@@ -81,7 +82,7 @@ public class Fishing{
 					boolean aboutTime = cur - fishingStarted > SOONEST_POSSIBLE_FISH_TIME;
 					if(aboutTime && isFinishedFishing() || failed){
 						TeraFish.pressKey(KeyEvent.VK_F, 0);
-						state = State.START;
+						state = State.FINISHED;
 						pressing = false;
 						Thread.sleep(AFTER_FISHING_DELAY);
 					}else{
@@ -89,12 +90,12 @@ public class Fishing{
 					}
 					break;
 			}
-			long executionTime = System.currentTimeMillis() - startTime;
-			System.out.println("Execution time: " + executionTime + "ms");
+			//long executionTime = System.currentTimeMillis() - startTime;
+			//System.out.println("Execution time: " + executionTime + "ms");
 		}
 	}
 	public static void continueFish()throws IOException{
-		Image i = new Image(TeraFish.screenshot(GAUGE));
+		Image i = TeraFish.screenshot(GAUGE);
 		Preprocess.histogram(i);
 		Blob[] blobs = Blobbing.getBlobs(i);
 		if(blobs.length==2){
@@ -186,7 +187,7 @@ public class Fishing{
 	private static boolean isTimeToFish(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
 			fTpl,
-			Preprocess.getGrey(new Image(TeraFish.screenshot(F)))
+			Preprocess.getGrey(TeraFish.screenshot(F))
 		);
 
 		return ratio < F_RATIO;
@@ -195,7 +196,7 @@ public class Fishing{
 	private static boolean isFinishedFishing(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
 			gaugeFrameTpl,
-			(new Image(TeraFish.screenshot(GAUGE_FRAME))).getRgb()
+			(TeraFish.screenshot(GAUGE_FRAME)).getRgb()
 		);
 
 		return ratio > FRAME_RATIO;

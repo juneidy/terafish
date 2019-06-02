@@ -10,8 +10,8 @@ public class Inventory{
 
 	private final Integer[] gridRow;
 	private final Integer[] gridCol;
-	private final Image img;
-	public final Blob blob; // so we know the offset
+	private Image img;
+	private Blob blob; // so we know the offset
 	private final int row;
 	private final int col;
 	private final Type type;
@@ -21,6 +21,8 @@ public class Inventory{
 	private static final double IGNORE_BORDER_ACTIVE = 0.12;
 	private static final double SIMILARITY_TOLERANCE = 0.1;
 	private static final double STACK_HEIGHT_RATIO = 0.74;
+
+	private static final int SIZE_TOLERANCE = 5;
 
 	public Inventory(Image i, Blob bl){
 		blob = bl;
@@ -71,23 +73,36 @@ public class Inventory{
 		System.out.println("");
 	}
 
+	public boolean update(Image i, Blob bl){
+		if(
+			Math.abs(bl.getHeight() - blob.getHeight()) < SIZE_TOLERANCE &&
+			Math.abs(bl.getWidth() - blob.getWidth()) < SIZE_TOLERANCE
+		){
+			blob = bl;
+			img = i.crop(bl);
+			return true;
+		}
+		return false;
+	}
+
 	public Type getType(){
 		return type;
 	}
 
-	public Point getDismantlePos(){
+	public Point openDismantle()throws InterruptedException{
 		Point p = null;
 		if(getType()==Type.MAIN){
 			Blob b = getInventSlot(0, 0);
-			p = new Point(
+			TeraFish.click(
 				blob.getLeft() + gridRow[6],
-				blob.getBottom() + b.getHeight()
+				blob.getBottom() + b.getHeight(),
+				InputEvent.BUTTON1_DOWN_MASK
 			);
 		}
 		return p;
 	}
 
-	public Blob getInventSlot(int x, int y){
+	private Blob getInventSlot(int x, int y){
 		x *= 2;
 		y *= 2;
 		return new Blob(
@@ -96,11 +111,15 @@ public class Inventory{
 		);
 	}
 
+	public Point getInventCentroid(int[] pos){
+		return getInventCentroid(pos[0], pos[1]);
+	}
+
 	public Point getInventCentroid(int x, int y){
 		x *= 2;
 		y *= 2;
 		int width = gridRow[x+1] - gridRow[x];
-		int height = gridRow[y+1] - gridRow[y];
+		int height = gridCol[y+1] - gridCol[y];
 		return new Point(
 			gridRow[x] + width / 2 + blob.getLeft(),
 			gridCol[y] + height / 2 + blob.getTop()
@@ -119,49 +138,27 @@ public class Inventory{
 			: tmp;
 	}
 
-	public void dismantle(Image tpl)throws InterruptedException{
-		int max = 20;
-		for(int ii = col - 1; ii >= 0; ii--){
-			for(int jj = row - 1; jj >= 0; jj--){
-				double abs = Preprocess.sumOfAbsoluteRatio(
-					Preprocess.resize(
-						crop(jj, ii, false),
-						tpl.width,
-						tpl.height
-					),
-					tpl,
-					IGNORE_BORDER
-				);
-				if(abs < SIMILARITY_TOLERANCE && max > 0){
-					TeraFish.click(
-						getInventCentroid(jj, ii),
-						InputEvent.BUTTON3_DOWN_MASK
-					);
-					max--;
-					Thread.sleep(500);
-				}
-			}
-		}
-	}
-
-	public LinkedList<int[]> matches(Image tpl, boolean stacked){
+	public LinkedList<int[]> matches(Image[] tpl, boolean stacked){
 		LinkedList<int[]> matches = new LinkedList<int[]>();
+		int tplLen = tpl.length - 1;
 		for(int ii = col - 1; ii >= 0; ii--){
 			for(int jj = row - 1; jj >= 0; jj--){
-				double abs = Preprocess.sumOfAbsoluteRatio(
-					Preprocess.resize(
-						crop(jj, ii, stacked),
-						tpl.width,
-						tpl.height
-					),
-					tpl,
-					stacked ? IGNORE_BORDER_ACTIVE : IGNORE_BORDER
-				);
-				if(abs < SIMILARITY_TOLERANCE){
-					matches.add(new int[]{ jj, ii });
-					System.out.println(">>>>> Pos " + jj + ", " + ii + ": " + abs);
+				int kk = tplLen;
+				boolean match = false;
+				while(!match && kk >= 0){
+					double abs = Preprocess.sumOfAbsoluteRatio(
+						Preprocess.resize(
+							crop(jj, ii, stacked),
+							tpl[kk].width,
+							tpl[kk].height
+						),
+						tpl[kk],
+						stacked ? IGNORE_BORDER_ACTIVE : IGNORE_BORDER
+					);
+					match = abs < SIMILARITY_TOLERANCE;
+					kk--;
 				}
-				System.out.println("Pos " + jj + ", " + ii + ": " + abs);
+				if(match) matches.add(new int[]{ jj, ii });
 			}
 		}
 		return matches;
