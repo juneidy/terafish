@@ -29,7 +29,6 @@ public class TeraFish{
 	private static final int inventKey = KeyEvent.VK_I;
 	private static final int petKey = KeyEvent.VK_BACK_QUOTE;
 	private static final int petFoodKey = KeyEvent.VK_F3;
-	private static final int dismantleCap = 55;
 
 	private static final Image[] fishToDismantle;
 	private static final Image[] bait = Templates.getBait(Config.BAIT);
@@ -118,7 +117,7 @@ public class TeraFish{
 				int fished = 0;
 				int totalFish = 0;
 				while(true){
-					if(fished < dismantleCap){
+					if(fished < Config.DISMANTLE_CAP){
 						Fishing.fish();
 						fished++;
 						totalFish++;

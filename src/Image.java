@@ -147,14 +147,14 @@ public class Image {
 	 * Load Greyscale tpl.
 	 */
 	public static int[][] loadGreyTemplate(String f)throws IOException{
-		return (new Image(ImageIO.read(new File(f)), true)).getGrey();
+		return (new Image(ImageIO.read(Image.class.getResource(f)), true)).getGrey();
 	}
 
 	/**
 	 * Load RGB tpl.
 	 */
 	public static int[] loadRgbTemplate(String f)throws IOException{
-		WritableRaster raster = ImageIO.read(new File(f)).getRaster();
+		WritableRaster raster = ImageIO.read(Image.class.getResource(f)).getRaster();
 		int height = raster.getHeight();
 		int width = raster.getWidth();
 
@@ -164,7 +164,7 @@ public class Image {
 	}
 
 	public static Image loadRgbImage(String f)throws IOException{
-		WritableRaster raster = ImageIO.read(new File(f)).getRaster();
+		WritableRaster raster = ImageIO.read(Image.class.getResource(f)).getRaster();
 		int height = raster.getHeight();
 		int width = raster.getWidth();
 
