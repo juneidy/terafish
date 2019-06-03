@@ -5,7 +5,8 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 
 public class Fishing{
-	private static final Rectangle GAUGE = new Rectangle(714, 309, 420, 30);
+	private static final int GAUGE_WIDTH = 420;
+	private static final Rectangle GAUGE = new Rectangle(714, 309, GAUGE_WIDTH, 30);
 	private static final Rectangle F = new Rectangle(957, 262, 12, 16);
 	private static final Rectangle GAUGE_FRAME = new Rectangle(702, 307, 10, 50);
 
@@ -165,13 +166,34 @@ public class Fishing{
 
 	private static boolean fishTooFar(Image i, Blob b){
 		int rightMost = b.getRight();
-		int top = b.getTop() + 9;
-		int right = rightMost - 10;
-		int left = b.getLeft() + 10;
+		int leftMost = b.getLeft();
+		int minBrightness = 150;
+		// Calling this function means they are in the same blob
+		if(golden){
+			minBrightness = 180;
+			if(rightMost - leftMost < 50){
+				// if only the fish is detected, keep holding F
+				// Golden fish brightness is so high that the box disappeared when
+				// golden is in the box
+				return false;
+			}
+		}
+		// if they are in the right-most of the pixels, just hold F
+		if(rightMost==(GAUGE_WIDTH - 1)){
+			return false;
+		}
+		int topMost = b.getTop();
+		int left = leftMost + 10;
 		int[][] grey = i.getGrey();
+		if(grey[topMost][leftMost] < 50){
+			// leftmost is definitely fish tail
+			return false;
+		}
+		int top = topMost + 9;
+		int right = rightMost - 10;
 		int distance = golden ? 12 : 30;
 		for(int ii = right; ii >= left; ii--){
-			if(grey[top][ii] > 150){
+			if(grey[top][ii] > minBrightness){
 				//this is the fin
 				//the head if golden
 				if(rightMost - ii < distance){
