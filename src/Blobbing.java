@@ -16,10 +16,19 @@ import java.util.stream.Collectors;
  * This class provides functionality to perform blobbing
  */
 public class Blobbing {
+	/**
+	 * Get the blob with default filter.
+	 * @param img The image to blob.
+	 */
 	public static Blob[] getBlobs(Image img){
-		return getBlobs(img, null);
+		return getBlobs(img, b -> b.isReasonableSize());
 	}
 
+	/**
+	 * Get the blob with custom filter.
+	 * @param img The image to blob.
+	 * @param filter The custom filter.
+	 */
 	public static Blob[] getBlobs(Image img, Predicate<Blob> filter){
 		int[][] grey = img.getGrey();
 		boolean[][] visited = new boolean[img.height][img.width];

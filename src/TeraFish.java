@@ -13,6 +13,7 @@ import java.io.IOException;
 
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
@@ -28,11 +29,10 @@ public class TeraFish{
 	private static final int inventKey = KeyEvent.VK_I;
 	private static final int petKey = KeyEvent.VK_BACK_QUOTE;
 	private static final int petFoodKey = KeyEvent.VK_F3;
-	private static final int maxFish = 55;
+	private static final int dismantleCap = 55;
 
-	private static final Templates.Location loc = Templates.Location.NONE;
 	private static final Image[] fishToDismantle;
-	private static final Image[] bait = Templates.getBait(5);
+	private static final Image[] bait = Templates.getBait(Config.BAIT);
 	private static final Image[] fillet = new Image[]{ Templates.FILLET };
 	public static final Robot r;
 	static{
@@ -40,7 +40,7 @@ public class TeraFish{
 		Image[] tmpDismantle = null;
 		try{
 			tmpR = new Robot();
-			tmpDismantle = Templates.getFishMatch(loc);
+			tmpDismantle = Templates.getFishMatch(Config.LOCATION);
 		}catch(AWTException ex){
 			System.out.println("Error creating robot " + ex);
 			System.exit(1);
@@ -84,8 +84,8 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To extract fish tpl
-				Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
-				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				//Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
+				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To test the dismantle
 				//findInventories(Image.loadTestImage("fish.png"));
@@ -105,15 +105,20 @@ public class TeraFish{
 				System.out.println("Execution time: " + executionTime + "ms");
 				//Thread.sleep(120000);
 			}else{
+				System.out.println("Initiating for location " + Config.LOCATION);
+				System.out.println("Using bait " + Config.BAIT);
+				System.out.println("Dismantling after " + Config.DISMANTLE_CAP + " fish");
 				System.out.println("System is starting in 3 seconds");
 				Thread.sleep(3000);
 
-				initState();
+				if(fishToDismantle!=null){
+					initState();
+				}
 
 				int fished = 0;
 				int totalFish = 0;
 				while(true){
-					if(fished < maxFish){
+					if(fished < dismantleCap){
 						Fishing.fish();
 						fished++;
 						totalFish++;
@@ -210,13 +215,13 @@ public class TeraFish{
 
 		Inventory[] inventories = Arrays.stream(blobs)
 			.map(b -> new Inventory(i.crop(b), b))
-			.filter(inv -> inv.getType()!=Inventory.Type.UNKNOWN)
+			.filter(inv -> !inv.isUnknown())
 			.toArray(Inventory[]::new);
 
 		for(Inventory in : inventories){
-			if(in.getType()==Inventory.Type.MAIN){
+			if(in.isMain()){
 				main = in;
-			}else if(in.getType()==Inventory.Type.PET){
+			}else if(in.isPet()){
 				pet = in;
 			}
 		}

@@ -33,6 +33,7 @@ public class Fishing{
 	private static State state = State.START;
 	private static boolean needCheckGolden = true;
 	private static boolean golden = false;
+	private static int startFishKey = KeyEvent.VK_R;
 
 	//Pressing state for efficiency?
 	private static boolean pressing = false;
@@ -48,7 +49,7 @@ public class Fishing{
 			//long startTime = System.currentTimeMillis();
 			switch(state){
 				case START:
-					TeraFish.pressKey(KeyEvent.VK_R, 3000);
+					TeraFish.pressKey(startFishKey, 3000);
 					state = State.WAIT;
 					break;
 				case WAIT:

@@ -1,15 +1,6 @@
 import java.io.IOException;
 
 public class Templates{
-	public static enum Location{
-		MURICAI,
-		CUTTHROAT_HARBOR,
-		LAKE_OF_TEARS,
-		VERXATUS_SWAMP,
-		CELSIAN_LAKE,
-		SERENS_LAKE,
-		NONE
-	}
 	public static final int[][] F;
 	public static final int[] GAUGE;
 	public static final Image FILLET;

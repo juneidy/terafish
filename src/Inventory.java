@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 public class Inventory{
-	public enum Type { MAIN, PET, UNKNOWN }
+	private enum Type { MAIN, PET, UNKNOWN }
 
 	private final Integer[] gridRow;
 	private final Integer[] gridCol;
@@ -85,13 +85,21 @@ public class Inventory{
 		return false;
 	}
 
-	public Type getType(){
-		return type;
+	public boolean isMain(){
+		return type == Type.MAIN;
+	}
+
+	public boolean isPet(){
+		return type == Type.PET;
+	}
+
+	public boolean isUnknown(){
+		return type == Type.UNKNOWN;
 	}
 
 	public Point openDismantle()throws InterruptedException{
 		Point p = null;
-		if(getType()==Type.MAIN){
+		if(isMain()){
 			Blob b = getInventSlot(0, 0);
 			TeraFish.click(
 				blob.getLeft() + gridRow[6],

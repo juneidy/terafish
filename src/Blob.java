@@ -5,13 +5,7 @@ import java.awt.Point;
  * @author Juneidy Wibowo
  */
 public class Blob {
-	/**
-	 * Top-left pixel of the object
-	 */
 	private Point topLeft;
-	/**
-	 * Bottom-right pixel of the object
-	 */
 	private Point bottomRight;
 	private int brightness;
 	private double brightnessRatio;
@@ -24,11 +18,19 @@ public class Blob {
 		bottomRight = inBottomRight;
 	}
 
+	/**
+	 * Calculate and return the brightness ratio of the blob in the image.
+	 * @param i The image to calculate.
+	 */
 	public double getBrightnessRatio(Image i){
 		getBrightness(i);
 		return brightnessRatio;
 	}
 
+	/**
+	 * Calculate and return the brightness of the blob in the image.
+	 * @param i The image to calculate.
+	 */
 	public int getBrightness(Image i){
 		int[][] g = i.getGrey();
 		brightness = 0;
@@ -70,18 +72,30 @@ public class Blob {
 		return bottomRight.x - topLeft.x + 1;
 	}
 
+	/**
+	 * Minimum reasonable blob size
+	 */
 	public boolean isReasonableSize(){
 		return getHeight() > 10 && getWidth() > 10;
 	}
 
+	/**
+	 * Minimum reasonable inventory size
+	 */
 	public boolean isReasonableInventorySize(){
 		return getWidth() > 200 && getHeight() > 250;
 	}
 
+	/**
+	 * Minimum reasonable dismantle size
+	 */
 	public boolean isReasonableDismantleSize(){
 		return getWidth() > 300 && getHeight() > 400;
 	}
 
+	/**
+	 * Minimum reasonable withdraw bait OK area size
+	 */
 	public boolean isReasonableBaitOkSize(){
 		int w = getWidth();
 		int h = getHeight();
@@ -108,6 +122,7 @@ public class Blob {
 		return this;
 	}
 
+	// For debug only
 	public String toString() {
 		return "Top is " + getTop() + ", bottom is " + getBottom() +
 			", left is " + getLeft() + ", right is " + getRight() +
