@@ -30,29 +30,17 @@ public class TeraFish{
 	private static final int petFoodKey = KeyEvent.VK_F3;
 	private static final int maxFish = 55;
 
+	private static final Templates.Location loc = Templates.Location.NONE;
 	private static final Image[] fishToDismantle;
-	private static final Image[] bait;
-	private static final Image[] fillet;
+	private static final Image[] bait = Templates.getBait(5);
+	private static final Image[] fillet = new Image[]{ Templates.FILLET };
 	public static final Robot r;
 	static{
 		Robot tmpR = null;
 		Image[] tmpDismantle = null;
-		Image tmpBait = null;
-		Image tmpFillet = null;
 		try{
 			tmpR = new Robot();
-			tmpDismantle = new Image[]{
-				//Image.loadRgbImage("fish6-mottled-ray.tpl"),
-				Image.loadRgbImage("fish7-chroma-salmon.tpl"),
-				//Image.loadRgbImage("fish7-electric-eel.tpl"),
-				//Image.loadRgbImage("fish7-gula-shark.tpl"),
-				//Image.loadRgbImage("fish7-yellowfin.tpl"),
-				Image.loadRgbImage("fish8-dipturus.tpl"),
-				//Image.loadRgbImage("fish8-prism-carp.tpl"),
-				//Image.loadRgbImage("fish8-stone-octopus.tpl"),
-			};
-			tmpBait = Image.loadRgbImage("bait5.tpl");
-			tmpFillet = Image.loadRgbImage("fillet.tpl");
+			tmpDismantle = Templates.getFishMatch(loc);
 		}catch(AWTException ex){
 			System.out.println("Error creating robot " + ex);
 			System.exit(1);
@@ -62,13 +50,11 @@ public class TeraFish{
 		}finally{
 			r = tmpR;
 			fishToDismantle = tmpDismantle;
-			bait = new Image[]{ tmpBait };
-			fillet = new Image[]{ tmpFillet };
 		}
 	}
 
 	// Debug vars
-	public static final boolean debug = true;
+	public static final boolean debug = false;
 	public static final String FORMAT = "png";
 	public static final File debugOutput = new File("/tmp/foo");
 	public static final int[] WHITE = new int[]{ 255, 255, 255 };
@@ -77,8 +63,6 @@ public class TeraFish{
 		try{
 			if(debug){
 				long startTime = System.currentTimeMillis();
-				//dismantle offset x: +70, y: +50
-
 				//Image i = Image.loadTestImage("pet-big.png");
 				//findInventories(i);
 				//LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
@@ -100,7 +84,7 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To extract fish tpl
-				Image i = getTpl(Image.loadTestImage("fish8-dipturus-fish7-chroma-salmon.png"), 0, 4);
+				Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
 				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To test the dismantle
@@ -135,8 +119,10 @@ public class TeraFish{
 						totalFish++;
 						System.out.println("Fished " + totalFish);
 					}else{
-						dismantle();
-						reloadBait();
+						if(fishToDismantle!=null){
+							dismantle();
+							reloadBait();
+						}
 						fished = 0;
 					}
 				}

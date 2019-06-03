@@ -237,7 +237,7 @@ public class Image {
 	 * so that it's easy to load test image.
 	 */
 	public static Image loadTestImage(String f)throws IOException{
-		BufferedImage buf = ImageIO.read(new File("../testfile/" + f));
+		BufferedImage buf = ImageIO.read(new File("testfile/" + f));
 		if(buf.getType()!=BufferedImage.TYPE_INT_RGB){
 			long startTime = System.currentTimeMillis();
 			BufferedImage tmp = new BufferedImage(

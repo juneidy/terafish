@@ -22,9 +22,6 @@ public class Fishing{
 
 	private static final int MIN_GOLDEN_WHITENESS = 80000;
 
-	private static int[][] fTpl;
-	private static int[] gaugeFrameTpl;
-
 	private enum State {
 		START,
 		WAIT,
@@ -36,15 +33,6 @@ public class Fishing{
 	private static State state = State.START;
 	private static boolean needCheckGolden = true;
 	private static boolean golden = false;
-	static{
-		try{
-			fTpl = Image.loadGreyTemplate("./f.tpl");
-			gaugeFrameTpl = Image.loadRgbTemplate("./gaugeframe.tpl");
-		}catch(IOException ex){
-			System.out.println("Error loading template " + ex);
-			System.exit(1);
-		}
-	}
 
 	//Pressing state for efficiency?
 	private static boolean pressing = false;
@@ -208,7 +196,7 @@ public class Fishing{
 
 	private static boolean isTimeToFish(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
-			fTpl,
+			Templates.F,
 			Preprocess.getGrey(TeraFish.screenshot(F))
 		);
 
@@ -217,7 +205,7 @@ public class Fishing{
 
 	private static boolean isFinishedFishing(){
 		double ratio = Preprocess.sumOfAbsoluteRatio(
-			gaugeFrameTpl,
+			Templates.GAUGE,
 			(TeraFish.screenshot(GAUGE_FRAME)).getRgb()
 		);
 

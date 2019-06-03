@@ -34,8 +34,6 @@ EMPTY =
 
 JAVA_FILES = $(subst $(SRC), $(EMPTY), $(wildcard $(SRC)*.java))
 
-TPL_FILES = $(subst $(SRC), $(EMPTY), $(wildcard $(SRC)*.tpl))
-
 ifdef PACKAGES
 PACKAGEDIRS = $(addprefix $(SRC), $(PACKAGES))
 PACKAGEFILES = $(subst $(SRC), $(EMPTY), $(foreach DIR, $(PACKAGEDIRS), \
@@ -53,7 +51,7 @@ CLASS_FILES = $(ALL_FILES:.java=.class)
 # The first target is the one that is executed when you invoke
 # "make". 
 
-all : directory $(addprefix $(BIN), $(CLASS_FILES)) $(addprefix $(BIN), $(TPL_FILES))
+build: directory $(addprefix $(BIN), $(CLASS_FILES))
 
 directory:
 	$(MKDIR) $(BIN)
@@ -62,13 +60,10 @@ directory:
 $(BIN)%.class : $(SRC)%.java
 	$(COMPILE) $<
 
-$(BIN)%.tpl : $(SRC)%.tpl
-	cp $< $(BIN)
+package : TeraFish.jar
 
-package : terafish.zip
-
-terafish.zip : $(SRC)*
-	zip -j terafish.zip $(SRC)*
+TeraFish.jar: build
+	jar cvfm TeraFish.jar Manifest.txt -C build . templates
 
 clean : 
-	rm -rf build terafish.zip
+	rm -rf build TeraFish.jar
