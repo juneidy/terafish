@@ -43,11 +43,13 @@ public class TeraFish{
 			tmpR = new Robot();
 			tmpDismantle = new Image[]{
 				//Image.loadRgbImage("fish6-mottled-ray.tpl"),
-				Image.loadRgbImage("fish7-yellowfin.tpl"),
-				//Image.loadRgbImage("fish7-gula-shark.tpl"),
+				Image.loadRgbImage("fish7-chroma-salmon.tpl"),
 				//Image.loadRgbImage("fish7-electric-eel.tpl"),
+				//Image.loadRgbImage("fish7-gula-shark.tpl"),
+				//Image.loadRgbImage("fish7-yellowfin.tpl"),
+				Image.loadRgbImage("fish8-dipturus.tpl"),
+				//Image.loadRgbImage("fish8-prism-carp.tpl"),
 				//Image.loadRgbImage("fish8-stone-octopus.tpl"),
-				Image.loadRgbImage("fish8-prism-carp.tpl"),
 			};
 			tmpBait = Image.loadRgbImage("bait5.tpl");
 			tmpFillet = Image.loadRgbImage("fillet.tpl");
@@ -98,8 +100,8 @@ public class TeraFish{
 				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To extract fish tpl
-				//Image i = getTpl(Image.loadTestImage("grade8-prism-carp.png"), 3, 0);
-				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+				Image i = getTpl(Image.loadTestImage("fish8-dipturus-fish7-chroma-salmon.png"), 0, 4);
+				ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 				// To test the dismantle
 				//findInventories(Image.loadTestImage("fish.png"));
