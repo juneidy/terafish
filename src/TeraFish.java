@@ -115,13 +115,23 @@ public class TeraFish{
 				}
 
 				int fished = 0;
-				int totalFish = 0;
+				int success = 0;
+				int failed = 0;
 				while(true){
 					if(fished < Config.DISMANTLE_CAP){
-						Fishing.fish();
 						fished++;
-						totalFish++;
-						System.out.println("Fished " + totalFish);
+						if(Fishing.fish()){
+							success++;
+						}else{
+							failed++;
+						}
+						System.out.println(
+							String.format(
+								"Success: %04d, Failed: %04d",
+								success,
+								failed
+							)
+						);
 					}else{
 						if(fishToDismantle!=null){
 							dismantle();

@@ -47,6 +47,14 @@ public class Image {
 		type = BufferedImage.TYPE_INT_RGB;
 	}
 
+	public Image(Image i){
+		rgb = new int[i.rgb.length];
+		System.arraycopy(i.rgb, 0, rgb, 0, rgb.length);
+		height = i.height;
+		width = i.width;
+		type = i.type;
+	}
+
 	/**
 	 * Returns a copy of cropped image
 	 */

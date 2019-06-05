@@ -62,7 +62,7 @@ $(BIN)%.class : $(SRC)%.java
 
 package : TeraFish.jar
 
-TeraFish.jar: build
+TeraFish.jar: build $(addprefix $(BIN), $(CLASS_FILES))
 	jar cvfm TeraFish.jar Manifest.txt -C build . templates
 
 clean : 

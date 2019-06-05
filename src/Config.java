@@ -8,6 +8,8 @@ public class Config{
 	public static final Location LOCATION;
 	public static final int BAIT;
 	public static final int DISMANTLE_CAP;
+	public static final boolean DEBUG_FISHING;
+	public static final String DEBUG_OUTPUT_LOCATION;
 	static{
 		try(FileInputStream input = new FileInputStream("./terafish.cfg")){
 			prop.load(input);
@@ -41,5 +43,11 @@ public class Config{
 		}
 		BAIT = Integer.parseInt(prop.getProperty("bait"));
 		DISMANTLE_CAP = Integer.parseInt(prop.getProperty("dismantleCap", "55"));
+		DEBUG_FISHING = Integer.parseInt(prop.getProperty("debugFishing", "0")) != 0;
+		if(DEBUG_FISHING){
+			DEBUG_OUTPUT_LOCATION = prop.getProperty("debugOutputLocation");
+		}else{
+			DEBUG_OUTPUT_LOCATION = null;
+		}
 	}
 }
