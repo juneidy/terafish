@@ -59,6 +59,7 @@ public class Templates{
 				};
 			case CELSIAN_LAKE:
 				return new Image[]{
+					Image.loadRgbImage("templates/fishes/fish6-mottled-ray.tpl"),
 					Image.loadRgbImage("templates/fishes/fish7-yellowfin.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-prism-carp.tpl"),
 				};
