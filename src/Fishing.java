@@ -1,7 +1,5 @@
 import java.awt.Rectangle;
 
-import java.awt.event.KeyEvent;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -38,8 +36,7 @@ public class Fishing{
 
 	private static State state = State.START;
 	private static boolean needCheckGolden = true;
-	private static boolean golden = false;
-	private static int startFishKey = KeyEvent.VK_R;
+	public static boolean golden = false;
 	private static LinkedList<Image> images = new LinkedList<Image>();
 
 	//Pressing state for efficiency?
@@ -59,7 +56,7 @@ public class Fishing{
 			//long startTime = System.currentTimeMillis();
 			switch(state){
 				case START:
-					TeraFish.pressKey(startFishKey, 3000);
+					TeraFish.pressKey(Config.ROD_KEY, 3000);
 					state = State.BASE_WAIT;
 					System.out.println(System.currentTimeMillis() + ": " + state);
 					break;
@@ -70,7 +67,7 @@ public class Fishing{
 					break;
 				case WAIT:
 					if(isTimeToFish()){
-						TeraFish.pressKey(KeyEvent.VK_F);
+						TeraFish.pressKey(Config.FISH_KEY);
 						fishingStarted = System.currentTimeMillis();
 						Thread.sleep(TIME_TO_FISH_BUFFER);
 						state = State.FISH;
@@ -84,7 +81,7 @@ public class Fishing{
 					boolean failed = cur - fishingStarted > MAX_FISHING_TIME;
 					boolean aboutTime = cur - fishingStarted > SOONEST_POSSIBLE_FISH_TIME;
 					if(aboutTime && isFinishedFishing() || failed){
-						TeraFish.pressKey(KeyEvent.VK_F, 0);
+						TeraFish.pressKey(Config.FISH_KEY, 0);
 						state = State.FINISHED;
 						System.out.println(System.currentTimeMillis() + ": " + state);
 						pressing = false;
@@ -149,7 +146,7 @@ public class Fishing{
 					System.out.println("Behind, press F");
 				}else{
 					if(!pressing){
-						TeraFish.r.keyPress(KeyEvent.VK_F);
+						TeraFish.r.keyPress(Config.FISH_KEY);
 						pressing = true;
 					}
 				}
@@ -158,7 +155,7 @@ public class Fishing{
 					System.out.println("In front, release F");
 				}else{
 					if(pressing){
-						TeraFish.r.keyRelease(KeyEvent.VK_F);
+						TeraFish.r.keyRelease(Config.FISH_KEY);
 						pressing = false;
 					}
 				}
@@ -173,7 +170,7 @@ public class Fishing{
 					System.out.println("In, too far, release F");
 				}else{
 					if(pressing){
-						TeraFish.r.keyRelease(KeyEvent.VK_F);
+						TeraFish.r.keyRelease(Config.FISH_KEY);
 						pressing = false;
 					}
 				}
@@ -182,7 +179,7 @@ public class Fishing{
 					System.out.println("In, not too far, hold F");
 				}else{
 					if(!pressing){
-						TeraFish.r.keyPress(KeyEvent.VK_F);
+						TeraFish.r.keyPress(Config.FISH_KEY);
 						pressing = true;
 					}
 				}

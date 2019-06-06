@@ -25,11 +25,6 @@ public class TeraFish{
 	private static Inventory main;
 	private static Inventory pet;
 
-	private static final int petStorageKey = KeyEvent.VK_X;
-	private static final int inventKey = KeyEvent.VK_I;
-	private static final int petKey = KeyEvent.VK_BACK_QUOTE;
-	private static final int petFoodKey = KeyEvent.VK_F3;
-
 	private static final Image[] fishToDismantle;
 	private static final Image[] bait = Templates.getBait(Config.BAIT);
 	private static final Image[] fillet = new Image[]{ Templates.FILLET };
@@ -117,6 +112,7 @@ public class TeraFish{
 				int fished = 0;
 				int success = 0;
 				int failed = 0;
+				int golden = 0;
 				while(true){
 					if(fished < Config.DISMANTLE_CAP){
 						fished++;
@@ -125,11 +121,15 @@ public class TeraFish{
 						}else{
 							failed++;
 						}
+						if(Fishing.golden){
+							golden++;
+						}
 						System.out.println(
 							String.format(
-								"Success: %04d, Failed: %04d",
+								"Success: %04d, Failed: %04d, Golden: %04d",
 								success,
-								failed
+								failed,
+								golden
 							)
 						);
 					}else{
@@ -148,13 +148,13 @@ public class TeraFish{
 	}
 	private static void initState()throws InterruptedException{
 		resetMouse();
-		pressKey(petKey);
+		pressKey(Config.PET_KEY);
 		Thread.sleep(1000);
-		pressKey(petStorageKey);
+		pressKey(Config.PET_STORAGE_KEY);
 		Thread.sleep(1000);
 		findInventories();
 		Thread.sleep(1000);
-		pressKey(petKey);
+		pressKey(Config.PET_KEY);
 		Thread.sleep(1000);
 	}
 	public static void pressKey(int key)throws InterruptedException{
@@ -302,11 +302,9 @@ public class TeraFish{
 
 		resetMouse();
 		Thread.sleep(1000);
-		pressKey(petKey);
+		pressKey(Config.PET_KEY);
 		Thread.sleep(1000);
-		pressKey(petFoodKey);
-		Thread.sleep(1000);
-		pressKey(petStorageKey);
+		pressKey(Config.PET_STORAGE_KEY);
 		Thread.sleep(1000);
 
 		updateInventory(screenshot());
@@ -354,7 +352,7 @@ public class TeraFish{
 		);
 
 		Thread.sleep(1000);
-		pressKey(petKey);
+		pressKey(Config.PET_KEY);
 		Thread.sleep(1000);
 		resetMouse();
 	}
