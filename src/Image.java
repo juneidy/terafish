@@ -260,4 +260,23 @@ public class Image {
 		}
 		return new Image(buf, true);
 	}
+
+	public static Image loadDebugImage(long timestamp, int frame)throws IOException{
+		BufferedImage buf = ImageIO.read(new File(
+			String.format("debug/%d - %04d", timestamp, frame)
+		));
+		if(buf.getType()!=BufferedImage.TYPE_INT_RGB){
+			long startTime = System.currentTimeMillis();
+			BufferedImage tmp = new BufferedImage(
+				buf.getWidth(),
+				buf.getHeight(),
+				BufferedImage.TYPE_INT_RGB
+			);
+			tmp.getGraphics().drawImage(buf, 0, 0, null);
+			buf = tmp;
+			long executionTime = System.currentTimeMillis() - startTime;
+			System.out.println("Converting image took: " + executionTime + "ms");
+		}
+		return new Image(buf, true);
+	}
 }

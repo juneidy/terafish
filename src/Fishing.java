@@ -124,6 +124,10 @@ public class Fishing{
 		if(Config.DEBUG_FISHING){
 			images.add(new Image(i));
 		}
+		fish(i);
+	}
+
+	public static void fish(Image i)throws IOException{
 		Preprocess.histogram(i);
 		Blob[] blobs = Blobbing.getBlobs(i);
 		if(blobs.length==2){
@@ -210,23 +214,46 @@ public class Fishing{
 			return false;
 		}
 		int topMost = b.getTop();
-		int left = leftMost + 10;
 		int[][] grey = i.getGrey();
-		if(grey[topMost][leftMost] < 50){
-			// leftmost is definitely fish tail
+		boolean isTail = true;
+		int d = 0;
+		while(isTail && d < 3){
+			isTail = grey[topMost+d][leftMost+d] < 50;
+			d++;
+		}
+		if(isTail){
+			// Cannot find box border, so it must be tail
 			return false;
 		}
-		int top = topMost + 9;
-		int right = rightMost - 10;
-		int distance = golden ? 12 : 30;
-		for(int ii = right; ii >= left; ii--){
-			if(grey[top][ii] > minBrightness){
-				//this is the fin
-				//the head if golden
-				if(rightMost - ii < distance){
-					return true;
-				}else{
+		boolean isHead = true;
+		d = 0;
+		while(isHead && d < 3){
+			isHead = grey[topMost+d][rightMost-d] < 50;
+			d++;
+		}
+		if(isHead){
+			// Cannot find box border, so it must be head
+			for(int ii = rightMost - 1; ii >= rightMost - 13; ii--){
+				//check how far the head is
+				if(grey[topMost + 1][ii] > minBrightness){
 					return false;
+				}
+			}
+			return true;
+		}else{
+			int top = topMost + 9;
+			int right = rightMost - 10;
+			int distance = golden ? 12 : 30;
+			int left = right - 5;
+			for(int ii = right; ii >= left; ii--){
+				if(grey[top][ii] > minBrightness){
+					//this is the fin
+					//the head if golden
+					if(rightMost - ii < distance){
+						return true;
+					}else{
+						return false;
+					}
 				}
 			}
 		}

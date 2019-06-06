@@ -57,48 +57,7 @@ public class TeraFish{
 		try{
 			if(debug){
 				long startTime = System.currentTimeMillis();
-				//Image i = Image.loadTestImage("pet-big.png");
-				//findInventories(i);
-				//LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
-	
-				Image i = Image.loadTestImage("max-inventory.png");
-				findInventories(i);
-				main.openDismantle();
-
-				//for(int[] pos : matches){
-				//	System.out.println(pos[0] + ", " + pos[1]);
-				//}
-				//Image i = Image.loadTestImage("bait-number.png");
-				//i.cacheGrey(Preprocess.filterColour(i, BAIT_NUMBER, 3));
-				//Blob[] blobs = Blobbing.getBlobs(
-				//	i,
-				//	b -> b.isReasonableBaitOkSize()
-				//);
-				////offset topleft +150, +16
-				//for(Blob b : blobs){
-				//	System.out.println(b.toString());
-				//}
-				//i.toGrey();
-				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
-
-				// To extract fish tpl
-				//Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
-				//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
-
-				// To test the dismantle
-				//findInventories(Image.loadTestImage("fish.png"));
-				//LinkedList<int[]> matches = main.matches(fishToDismantle, false);
-				//for(int[] pos : matches){
-				//	System.out.println(pos[0] + ", " + pos[1]);
-				//}
-
-				//System.out.println("System is starting in 3 seconds");
-				//Thread.sleep(3000);
-
-				//initState();
-				//dismantle();
-				//reloadBait();
-
+				debugCode();
 				long executionTime = System.currentTimeMillis() - startTime;
 				System.out.println("Execution time: " + executionTime + "ms");
 				//Thread.sleep(120000);
@@ -201,14 +160,6 @@ public class TeraFish{
 		mouseMove(b.x, b.y);
 		Thread.sleep(500);
 		r.mouseRelease(key);
-	}
-	public static void printDebug(Image i, Blob[] blobs)throws IOException{
-		i.toGrey();
-		for(Blob blob : blobs){
-			System.out.println(blob.toString());
-			i.drawBox(WHITE, blob);
-		}
-		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 	}
 	public static Image screenshot(){
 		return screenshot(SCREEN);
@@ -367,5 +318,68 @@ public class TeraFish{
 	private static Image getTpl(Image i, int x, int y){
 		findInventories(i);
 		return main.crop(x, y, false);
+	}
+	private static void debugCode()throws IOException{
+		//Image i = Image.loadTestImage("pet-big.png");
+		//findInventories(i);
+		//LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
+
+		//Image i = Image.loadTestImage("max-inventory.png");
+		//findInventories(i);
+		//main.openDismantle();
+
+		//for(int[] pos : matches){
+		//	System.out.println(pos[0] + ", " + pos[1]);
+		//}
+		//Image i = Image.loadTestImage("bait-number.png");
+		//i.cacheGrey(Preprocess.filterColour(i, BAIT_NUMBER, 3));
+		//Blob[] blobs = Blobbing.getBlobs(
+		//	i,
+		//	b -> b.isReasonableBaitOkSize()
+		//);
+		////offset topleft +150, +16
+		//for(Blob b : blobs){
+		//	System.out.println(b.toString());
+		//}
+		//i.toGrey();
+		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+
+		// To extract fish tpl
+		//Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
+		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+
+		// To test the dismantle
+		//findInventories(Image.loadTestImage("fish.png"));
+		//LinkedList<int[]> matches = main.matches(fishToDismantle, false);
+		//for(int[] pos : matches){
+		//	System.out.println(pos[0] + ", " + pos[1]);
+		//}
+
+		//System.out.println("System is starting in 3 seconds");
+		//Thread.sleep(3000);
+
+		//initState();
+		//dismantle();
+		//reloadBait();
+
+		long ts = 1559824202529L;
+		int s = 0;
+		int e = 249;
+		s = 22;
+		e = 23;
+		for(int ii = s; ii < e; ii++){
+			System.out.println("Frame " + ii);
+			Image i = Image.loadDebugImage(ts, ii);
+			Fishing.fish(i);
+			System.out.println("");
+		}
+	}
+	public static void printDebug(Image i, Blob[] blobs)throws IOException{
+		i.toGrey();
+		for(Blob blob : blobs){
+			//System.out.println(blob.toString());
+			i.drawBox(WHITE, blob);
+		}
+		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 	}
 }
