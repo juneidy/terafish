@@ -89,6 +89,10 @@ public class Inventory{
 		return type == Type.MAIN;
 	}
 
+	public boolean isMaxInventory(){
+		return col==15;
+	}
+
 	public boolean isPet(){
 		return type == Type.PET;
 	}
@@ -101,9 +105,15 @@ public class Inventory{
 		Point p = null;
 		if(isMain()){
 			Blob b = getInventSlot(0, 0);
+			int yOffset;
+			if(isMaxInventory()){
+				yOffset = (int)(b.getHeight() * 1.25);
+			}else{
+				yOffset = (int)(b.getHeight() * 2.5);
+			}
 			TeraFish.click(
 				blob.getLeft() + gridRow[6],
-				blob.getBottom() + b.getHeight(),
+				blob.getTop() + gridCol[gridCol.length - 1] + yOffset,
 				InputEvent.BUTTON1_DOWN_MASK
 			);
 		}

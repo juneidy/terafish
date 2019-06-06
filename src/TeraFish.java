@@ -60,6 +60,10 @@ public class TeraFish{
 				//Image i = Image.loadTestImage("pet-big.png");
 				//findInventories(i);
 				//LinkedList<int[]> matches = pet.matches(new Image[]{ bait }, true);
+	
+				Image i = Image.loadTestImage("max-inventory.png");
+				findInventories(i);
+				main.openDismantle();
 
 				//for(int[] pos : matches){
 				//	System.out.println(pos[0] + ", " + pos[1]);
@@ -177,12 +181,16 @@ public class TeraFish{
 		r.mouseMove(x + 1, y + 1);
 	}
 	public static void click(int x, int y, int key)throws InterruptedException{
-		mouseMove(x, y);
+		if(debug){
+			System.out.println("Clicking x: " + x + ", y: " + y);
+		}else{
+			mouseMove(x, y);
 
-		Thread.sleep(200);
+			Thread.sleep(200);
 
-		r.mousePress(key);
-		r.mouseRelease(key);
+			r.mousePress(key);
+			r.mouseRelease(key);
+		}
 	}
 	public static void dragAndDrop(Point a, Point b)throws InterruptedException{
 		int key = InputEvent.BUTTON1_DOWN_MASK;
