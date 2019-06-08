@@ -208,7 +208,7 @@ public class TeraFish{
 		Thread.sleep(1000);
 
 		i = screenshot();
-		i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 0));
+		i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 1));
 		blobs = Blobbing.getBlobs(
 			i,
 			b -> b.isReasonableDismantleSize()
@@ -345,7 +345,12 @@ public class TeraFish{
 		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To extract fish tpl
-		Image i = getTpl(Image.loadTestImage("fish9-mossback.png"), 0, 2);
+		//Image i = getTpl(Image.loadTestImage("fish9-mossback.png"), 0, 2);
+		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+
+		Image i = Image.loadTestImage("dismantle-weird.png");
+		i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 1));
+		i.toGrey();
 		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To test the dismantle
