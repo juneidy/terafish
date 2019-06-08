@@ -47,27 +47,32 @@ public class Templates{
 					Image.loadRgbImage("templates/fishes/fish6-mottled-ray.tpl"),
 					Image.loadRgbImage("templates/fishes/fish7-gula-shark.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-prism-carp.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-bluefin.tpl"),
 				};
 			case LAKE_OF_TEARS:
 				return new Image[]{
 					Image.loadRgbImage("templates/fishes/fish7-electric-eel.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-crimson-marlin.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-crimson-squid.tpl"),
 				};
 			case VERXATUS_SWAMP:
 				return new Image[]{
 					Image.loadRgbImage("templates/fishes/fish7-chroma-salmon.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-dipturus.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-golden-crayfish.tpl"),
 				};
 			case CELSIAN_LAKE:
 				return new Image[]{
 					Image.loadRgbImage("templates/fishes/fish6-mottled-ray.tpl"),
 					Image.loadRgbImage("templates/fishes/fish7-yellowfin.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-prism-carp.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-bluefin.tpl"),
 				};
 			case SERENS_LAKE:
 				return new Image[]{
 					Image.loadRgbImage("templates/fishes/fish7-electric-eel.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-stone-octopus.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-golden-eel.tpl"),
 				};
 		}
 		return null;

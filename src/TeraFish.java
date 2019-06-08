@@ -345,13 +345,13 @@ public class TeraFish{
 		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To extract fish tpl
-		//Image i = getTpl(Image.loadTestImage("fish9-mossback.png"), 0, 2);
-		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
-
-		Image i = Image.loadTestImage("dismantle-weird.png");
-		i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 1));
-		i.toGrey();
+		Image i = getTpl(Image.loadTestImage("fish9-golden-eel.png"), 0, 3);
 		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+
+		//Image i = Image.loadTestImage("dismantle-weird.png");
+		//i.cacheGrey(Preprocess.filterColour(i, DISMANTLE_AREA, 1));
+		//i.toGrey();
+		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To test the dismantle
 		//findInventories(Image.loadTestImage("fish.png"));
