@@ -345,8 +345,8 @@ public class TeraFish{
 		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To extract fish tpl
-		//Image i = getTpl(Image.loadTestImage("fish8-crimson-marlin.png"), 2, 1);
-		//ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
+		Image i = getTpl(Image.loadTestImage("fish9-mossback.png"), 0, 2);
+		ImageIO.write(i.toBufferedImage(), FORMAT, debugOutput);
 
 		// To test the dismantle
 		//findInventories(Image.loadTestImage("fish.png"));
@@ -362,17 +362,17 @@ public class TeraFish{
 		//dismantle();
 		//reloadBait();
 
-		long ts = 1559824202529L;
-		int s = 0;
-		int e = 249;
-		s = 22;
-		e = 23;
-		for(int ii = s; ii < e; ii++){
-			System.out.println("Frame " + ii);
-			Image i = Image.loadDebugImage(ts, ii);
-			Fishing.fish(i);
-			System.out.println("");
-		}
+		//long ts = 1559824202529L;
+		//int s = 0;
+		//int e = 249;
+		//s = 22;
+		//e = 23;
+		//for(int ii = s; ii < e; ii++){
+		//	System.out.println("Frame " + ii);
+		//	Image i = Image.loadDebugImage(ts, ii);
+		//	Fishing.fish(i);
+		//	System.out.println("");
+		//}
 	}
 	public static void printDebug(Image i, Blob[] blobs)throws IOException{
 		i.toGrey();

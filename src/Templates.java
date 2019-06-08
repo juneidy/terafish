@@ -40,6 +40,7 @@ public class Templates{
 				return new Image[]{
 					Image.loadRgbImage("templates/fishes/fish7-chroma-salmon.tpl"),
 					Image.loadRgbImage("templates/fishes/fish8-dipturus.tpl"),
+					Image.loadRgbImage("templates/fishes/fish9-mossback.tpl"),
 				};
 			case CUTTHROAT_HARBOR:
 				return new Image[]{
